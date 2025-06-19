@@ -28,7 +28,6 @@ Payment Method API
 -Payment Option (Pay FUll/ Pay Deposit 25%)
 
 Booking API
-- User Id
 - Venue Id
 - Date and Time //can see if is reserved
 - Event type Id
@@ -42,8 +41,9 @@ Booking API
 - Last Name
 - Email
 - Number
--Payment Mehod ID
+-Payment Method ID
 -Card Info
+-timestamp
 
 
 Reservation Flow
@@ -62,3 +62,5 @@ Reservation Flow
 2. Make a controller
 3. Make a routes
 4. Last is Connect to server.js
+
+npx prisma migrate dev --name //EventType
