@@ -9,3 +9,16 @@ exports.createEvent = async (data) => {
         data
     })
 }
+
+exports.deleteEvent = async (id) => {
+    return await prisma.eventType.delete({
+        where: {event_type_id: id}
+    })
+}
+
+exports.editEvent = async (id, data) => {
+    return await prisma.eventType.update({
+        where: {event_type_id: id},
+        data
+    })
+}
