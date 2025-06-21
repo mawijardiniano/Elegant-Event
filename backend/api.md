@@ -4,7 +4,7 @@ Authentication API Admin
 - password
 
 
-Venue API
+Venue API // admin will add
 -Image
 -Venue Name
 -ratings
