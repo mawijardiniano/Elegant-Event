@@ -18,8 +18,12 @@ exports.createVenue = async (req, res) => {
       venue_capacity,
       venue_loc,
       venue_price,
-      venue_tags,
+      venue_tags = []
     } = req.body;
+
+    if (!Array.isArray(venue_tags)) {
+      return res.status(400).json({ message: "venue_tags must be an array of tag IDs." });
+    }
 
     const venue = await venueService.createVenue({
       venue_name,
@@ -28,11 +32,13 @@ exports.createVenue = async (req, res) => {
       venue_capacity,
       venue_loc,
       venue_price,
-      venue_tags,
+      venue_tags
     });
+
     res.status(200).json(venue);
   } catch (error) {
     console.error("Error adding Venue", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
