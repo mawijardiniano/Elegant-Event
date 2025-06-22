@@ -41,35 +41,27 @@ model Service{
 
   bookings Booking[]  
 }
+model Tag {
+  tag_id   Int     @id @default(autoincrement())
+  tag_name String
+  venues   Venue[] // back relation
+}
 
 model Venue {
   venue_id      Int     @id @default(autoincrement())
   venue_name    String
-  venue_ratings Float?   
+  venue_ratings Float?
   venue_desc    String
   venue_capacity Int
   venue_loc     String
   venue_price   Float
-  venue_tags    VenueTag[]
+
+  tag_id Int?
+  tag    Tag?  @relation(fields: [tag_id], references: [tag_id])
 
   bookings Booking[]
 }
 
-model Tag {
-  tag_id  Int      @id @default(autoincrement())
-  tag_name  String
-  venues     VenueTag[]
-}
-
-model VenueTag {
-  venue_id Int
-  tag_id   Int
-
-  venue Venue @relation(fields: [venue_id], references: [venue_id])
-  tag   Tag   @relation(fields: [tag_id], references: [tag_id])
-
-  @@id([venue_id, tag_id])
-}
 
 model Booking {
   booking_id     Int        @id @default(autoincrement())

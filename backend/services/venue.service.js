@@ -1,38 +1,40 @@
 const prisma = require('../config/prisma')
 
 exports.getVenues = async () => {
-    return await prisma.venue.findMany()
+    return await prisma.venue.findMany({
+        include: {
+          tag: true
+        }
+    })
 }
+
 exports.createVenue = async (data) => {
-  const { venue_tags, ...otherData } = data;
+  const { tag_id, ...otherData } = data;
 
   return await prisma.venue.create({
     data: {
       ...otherData,
-      venue_tags: {
-        create: venue_tags.map((tag_id) => ({
-          tag: {
-            connect: { tag_id }
-          }
-        }))
+      tag: {
+        connect: { tag_id: Number(tag_id) }
       }
     },
     include: {
-      venue_tags: {
-        include: {
-          tag: true
-        }
-      }
+      tag: true
     }
   });
 };
 
+
 exports.editVenue = async (id, data) => {
-    return await prisma.venue.update({
-        where: {venue_id: id}, 
-        data
-    })
-}
+  return await prisma.venue.update({
+    where: { venue_id: id },
+    data,
+    include: {
+      tag: true
+    }
+  });
+};
+
 
 exports.deleteVenue = async (id) => {
     return await prisma.venue.delete({
