@@ -4,8 +4,11 @@ import Booking from "./pages/booking/booking";
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
+console.log('Stripe key:', import.meta.env.VITE_STRIPE_API);
 
-const stripePromise = loadStripe(process.env.STRIPE_API!);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_API!);
+
+
 
 function App() {
   return (
