@@ -1,8 +1,13 @@
 const prisma = require("../config/prisma");
 
 exports.getPackage = async () => {
-  return await prisma.package.findMany();
+  const packages = await prisma.package.findMany();
+  return packages.map(pkg => ({
+    ...pkg,
+    features: pkg.features ? JSON.parse(pkg.features) : [],
+  }));
 };
+
 
 exports.createPackage = async (data) => {
   return await prisma.package.create({

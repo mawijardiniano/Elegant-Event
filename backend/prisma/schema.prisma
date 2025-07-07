@@ -28,19 +28,15 @@ model EventType {
 }
 
 model Package {
-  package_id    Int     @id @default(autoincrement())
-  package_name String
-
-	bookings Booking[]
+  package_id     Int      @id @default(autoincrement())
+  package_name   String
+  package_price  Float    @default(0)
+  package_desc   String   @default("")
+  features       String   @default("[]")
+  bookings       Booking[]
 }
 
-model Service{
-  serv_id     Int     @id @default(autoincrement())
-  serv_name   String
-  serv_price  Float
 
-  bookings Booking[]  
-}
 model Tag {
   tag_id   Int     @id @default(autoincrement())
   tag_name String
@@ -82,11 +78,30 @@ model Booking {
   package_id     Int
   package        Package    @relation(fields: [package_id], references: [package_id])
 
-  serv_id        Int?
-  add_ons        Service?   @relation(fields: [serv_id], references: [serv_id])
+  services BookingService[]
 
   first_name     String
   last_name      String
   email          String
   number         String 
+}
+
+model BookingService {
+  id          Int      @id @default(autoincrement())
+
+  booking     Booking  @relation(fields: [booking_id], references: [booking_id])
+  booking_id  Int
+
+  service     Service  @relation(fields: [serv_id], references: [serv_id])
+  serv_id     Int
+
+  @@unique([booking_id, serv_id])  // optional: prevent duplicate pairs
+}
+
+model Service {
+  serv_id     Int     @id @default(autoincrement())
+  serv_name   String
+  serv_price  Float
+
+  bookings BookingService[]
 }

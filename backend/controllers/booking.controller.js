@@ -9,7 +9,6 @@ exports.getBookings = async (req, res) => {
   }
 };
 
-
 exports.createBooking = async (req, res) => {
   try {
     const data = req.body;
@@ -18,5 +17,15 @@ exports.createBooking = async (req, res) => {
     res.status(201).json(booking);
   } catch (error) {
     console.error("Error creating booking", error);
+  }
+};
+
+exports.deleteBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await bookingService.deleteBooking(parseInt(id));
+        res.status(200).json({ message: "Booking deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting booking", error);
   }
 };

@@ -85,7 +85,7 @@ exports.editVenue = async (req, res) => {
 
 exports.deleteVenue = async (req, res) => {
     try {
-        const {id} = req.body;
+        const {id} = req.params;
         await venueService.deleteVenue(parseInt(id))
         res.status(200).json({message: 'Deleted Successfully'})
     } catch (error) {

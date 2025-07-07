@@ -1,18 +1,28 @@
-import { Button } from "@/components/ui/button";
-import useToggle from "./hooks/useToggle";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Homepage from "./pages/homepage";
+import Booking from "./pages/booking/booking";
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+
+
+const stripePromise = loadStripe(process.env.STRIPE_API!);
 
 function App() {
-  const [isOpen, { toggle, setTrue, setFalse }] = useToggle();
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center">
-      <Button onClick={setTrue} className="bg-red-500 text-white">
-        Click me
-      </Button>
-      
-      {isOpen && <p>hahaha</p>}
-      <Button onClick={setFalse} className="bg-red-500 text-white">Close me</Button>
+    <BrowserRouter>
+   <Routes>
+    <Route path="/" element={<Homepage/>}></Route>
+     <Route
+  path="/booking"
+  element={
+    <Elements stripe={stripePromise}>
+      <Booking />
+    </Elements>
+  }
+/>
 
-    </div>
+   </Routes>
+   </BrowserRouter>
   );
 }
 
