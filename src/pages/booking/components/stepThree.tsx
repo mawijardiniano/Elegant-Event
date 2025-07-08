@@ -19,23 +19,71 @@ import {
   nextStep,
   prevStep,
 } from "@/pages/booking/redux/bookingSlice";
+import { z } from "zod";
+
+const guestInfoSchema = z.object({
+  event_type: z.string().min(1, "Event type is required"),
+  expected_guest: z
+    .string()
+    .min(1, "Guest count is required")
+    .regex(/^\d+$/, "Guest count must be a number"),
+  event_name: z.string().min(1, "Event name is required"),
+  description: z.string().optional(),
+  request: z.string().optional(),
+});
 
 export default function StepThree() {
   const dispatch = useDispatch();
   const GET_EVENTS = "http://localhost:3000/events";
+
   const [events, setEvents] = useState<EventType[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
-
-  const [guestCount, setGuestCount] = useState<string>("");
+  const [guestCount, setGuestCount] = useState("");
   const [eventName, setEventName] = useState("");
   const [description, setDescription] = useState("");
   const [request, setRequest] = useState("");
-  const [showError, setShowError] = useState(false);
-  const handleContinue = () => {
-    if (!events || !guestCount || !eventName) {
-      setShowError(true);
-      return;
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  const validateForm = (
+    override?: Partial<{
+      event_type: string;
+      expected_guest: string;
+      event_name: string;
+      description: string;
+      request: string;
+    }>
+  ) => {
+    const formData = {
+      event_type: selectedEvent?.event_type || "",
+      expected_guest: guestCount,
+      event_name: eventName,
+      description,
+      request,
+      ...override,
+    };
+
+    const result = guestInfoSchema.safeParse(formData);
+    const errors: Record<string, string> = {};
+    if (!result.success) {
+      result.error.errors.forEach((err) => {
+        if (err.path.length > 0) {
+          errors[err.path[0] as string] = err.message;
+        }
+      });
     }
+    setFormErrors(errors);
+    return result.success;
+  };
+
+  const handleContinue = () => {
+    setTouched({
+      event_type: true,
+      expected_guest: true,
+      event_name: true,
+    });
+
+    if (!validateForm()) return;
 
     const payload: GuestInfo = {
       event_type: selectedEvent,
@@ -61,6 +109,10 @@ export default function StepThree() {
   useEffect(() => {
     fetchEvents();
   }, []);
+
+  const markTouched = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
 
   return (
     <div className="flex flex-col items-center py-12 px-4">
@@ -88,6 +140,8 @@ export default function StepThree() {
                     (event) => event.event_type === value
                   );
                   setSelectedEvent(found ?? null);
+                  validateForm({ event_type: value });
+                  markTouched("event_type");
                 }}
               >
                 <SelectTrigger className="w-[350px]">
@@ -104,27 +158,51 @@ export default function StepThree() {
                   ))}
                 </SelectContent>
               </Select>
+              {touched.event_type && formErrors.event_type && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.event_type}</p>
+              )}
             </div>
+
             <div className="w-full">
               <Label className="mb-1 block">Expected Guest Count</Label>
               <Input
                 value={guestCount}
-                onChange={(e) => setGuestCount(e.target.value)}
+                onChange={(e) => {
+                  setGuestCount(e.target.value);
+                  validateForm({ expected_guest: e.target.value });
+                }}
+                onBlur={() => markTouched("expected_guest")}
               />
+              {touched.expected_guest && formErrors.expected_guest && (
+                <p className="text-red-500 text-sm mt-1">
+                  {formErrors.expected_guest}
+                </p>
+              )}
             </div>
           </div>
+          <div className="flex flex-col gap-1">
+
           <Label className="mb-1 block">Event Name</Label>
           <Input
             className="w-full"
             value={eventName}
-            onChange={(e) => setEventName(e.target.value)}
+            onChange={(e) => {
+              setEventName(e.target.value);
+              validateForm({ event_name: e.target.value });
+            }}
+            onBlur={() => markTouched("event_name")}
           />
+          {touched.event_name && formErrors.event_name && (
+            <p className="text-red-500 text-sm mt-1">{formErrors.event_name}</p>
+          )}
+
           <Label className="mb-1 block">Event Description</Label>
           <Textarea
             className="w-full"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+
           <Label className="mb-1 block">
             Special Requests or Accommodations
           </Label>
@@ -133,26 +211,22 @@ export default function StepThree() {
             value={request}
             onChange={(e) => setRequest(e.target.value)}
           />
-
-           {showError && (
-            <p className="text-red-500 text-sm mt-4">
-              Please fill out required fields before continuing.
-            </p>
-          )}
         </div>
-              <div className="flex justify-between px-10 pt-8">
-        <Button
-          className="bg-black text-white"
-          onClick={() => dispatch(prevStep())}
-        >
-          Previous
-        </Button>
-        <Button className="bg-black text-white" onClick={handleContinue}>
-          Continue
-        </Button>
-      </div>
-      </div>
+                    
+          </div>
 
+        <div className="flex justify-between px-10 pt-8">
+          <Button
+            className="bg-black text-white"
+            onClick={() => dispatch(prevStep())}
+          >
+            Previous
+          </Button>
+          <Button className="bg-black text-white" onClick={handleContinue}>
+            Continue
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

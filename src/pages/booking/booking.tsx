@@ -9,6 +9,7 @@ import StepFive from "./components/stepFive";
 import StepSix from "@/pages/booking/components/stepSix";
 import StepSeven from "@/pages/booking/components/stepSeven";
 import Layout from "@/components/layout/layout";
+import StepEight from "./components/stepEight";
 
 export default function Booking() {
   const currentStep = useSelector(
@@ -31,6 +32,8 @@ export default function Booking() {
         return <StepSix />;
       case 7:
         return <StepSeven />;
+      case 8:
+        return <StepEight />;
       default:
         return <StepOne />;
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setVenue, nextStep, prevStep } from "@/pages/booking/redux/bookingSlice";
+import { setVenue, nextStep } from "@/pages/booking/redux/bookingSlice";
 
 import { Button } from "@/components/ui/button";
 import type { VenueList } from "@/utils/types";
@@ -123,13 +123,7 @@ export default function StepOne() {
           ))}
         </div>
 
-        <div className="flex justify-between px-10 pt-8">
-          <Button
-            className="bg-black text-white"
-            onClick={() => dispatch(prevStep())}
-          >
-            Previous
-          </Button>
+        <div className="w-full items-end justify-end flex px-10 pt-8">
           <Button
             className="bg-black text-white"
             onClick={handleContinue}

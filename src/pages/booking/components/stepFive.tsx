@@ -3,6 +3,8 @@ import ProgressComponent from "./progress";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { isGmail } from "@/utils/regex";
+import { z } from "zod";
 import { useDispatch } from "react-redux";
 import {
   prevStep,
@@ -10,13 +12,27 @@ import {
   setContactInfo,
 } from "@/pages/booking/redux/bookingSlice";
 
+const phoneNumber = z
+  .string()
+  .min(7, "Number is too short")
+  .max(15, "Number is too long")
+  .regex(/^[0-9]+$/, "Phone number must contain only digits");
+
+  const name = z.string()
+
 export default function StepFive() {
   const dispatch = useDispatch();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  
   const [email, setEmail] = useState("");
+  const [touched, setTouched] = useState(false);
+  const showError = touched && email.length > 0 && !isGmail(email);
+
   const [number, setNumber] = useState("");
+  const [touchedNumber, setTouchedNumber] = useState(false);
+  const [numberError, setNumberError] = useState<string | null>(null);
 
   const [street, setStreet] = useState("");
   const [barangay, setBarangay] = useState("");
@@ -32,11 +48,35 @@ export default function StepFive() {
       (field) => field.trim() !== ""
     ) && agreedToTerms;
 
+
+  const validateNumber = (value: string) => {
+    try {
+      phoneNumber.parse(value);
+      setNumberError(null);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setNumberError(error.errors[0].message);
+      }
+    }
+  };
+
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setNumber(val);
+    validateNumber(val);
+  };
+
   const handleContinue = () => {
     if (!firstName || !lastName || !email || !number) {
       alert("Please fill in all personal information fields.");
       return;
     }
+
+       if (numberError) {
+      alert(numberError);
+      return;
+    }
+
 
     if (!agreedToTerms) {
       alert("You must agree to the Terms of Service and Privacy Policy.");
@@ -100,15 +140,26 @@ export default function StepFive() {
                 placeholder="Enter your Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => setTouched(true)}
               />
+              {showError && (
+                <p style={{ color: "red", marginTop: 4 }}>
+                  Please enter a valid Gmail address.
+                </p>
+              )}
             </div>
+
             <div className="w-full">
               <Label className="mb-2 block">Number</Label>
-              <Input
-                placeholder="Enter your Phone Number"
-                value={number}
-                onChange={(e) => setNumber(e.target.value)}
-              />
+                       <Input
+            placeholder="Enter your Phone Number"
+            value={number}
+            onChange={handleNumberChange}
+            onBlur={() => setTouchedNumber(true)}
+          />
+          {touchedNumber && numberError && (
+            <p style={{ color: "red", marginTop: 4 }}>{numberError}</p>
+          )}
             </div>
           </div>
 
@@ -184,9 +235,7 @@ export default function StepFive() {
             </label>
           </div>
         </div>
-      </div>
-
-      <div className="flex justify-between px-10 pt-8">
+         <div className="flex justify-between px-10 pt-8">
         <Button
           className="bg-black text-white"
           onClick={() => dispatch(prevStep())}
@@ -205,6 +254,9 @@ export default function StepFive() {
           Continue
         </Button>
       </div>
+      </div>
+
+     
     </div>
   );
 }
