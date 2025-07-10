@@ -7,23 +7,23 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { resetBooking } from "../redux/bookingSlice";
 
-
 export default function StepEight() {
-    const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const totalPrice = useSelector(
-    (state: RootState) => state.booking.total_price
-  );
+
+  const totalPrice = useSelector((state: RootState) => state.booking.total_price);
   const venue = useSelector((state: RootState) => state.booking.venue);
-  const date = useSelector((state: RootState) => state.booking.booking_date);
-  const total_guest = useSelector(
-    (state: RootState) => state.booking.guest_info?.expected_guest
-  );
-   const handleGoHome = () => {
-    dispatch(resetBooking()); // reset all booking info and step = 1
-    navigate("/"); // redirect to home page
+  const bookingDate = useSelector((state: RootState) => state.booking.booking_date);
+  const totalGuest = useSelector((state: RootState) => state.booking.guest_info?.expected_guest);
+
+  const handleGoHome = () => {
+    dispatch(resetBooking()); 
+    navigate("/"); 
   };
 
+  const startDate = bookingDate?.start ? new Date(bookingDate.start) : null;
+  const endDate = bookingDate?.end ? new Date(bookingDate.end) : null;
+  const time = bookingDate?.time || "";
 
   return (
     <div className="flex flex-col items-center py-12 px-4">
@@ -44,14 +44,28 @@ export default function StepEight() {
             <h2 className="text-xl font-bold">Event Details</h2>
             <p>{venue?.venue_name}</p>
             <p>{venue?.venue_loc}</p>
-            <p>{formatted(new Date(date))}</p>
-            <p>{total_guest}</p>
+
+            <p>
+              <strong>Date:</strong>{" "}
+              {startDate ? formatted(startDate) : "No date selected"}
+              {endDate && endDate.getTime() !== startDate?.getTime()
+                ? ` - ${formatted(endDate)}`
+                : ""}
+            </p>
+
+            <p>
+              <strong>Time:</strong> {time || "No time selected"}
+            </p>
+
+            <p><strong>Expected Guests:</strong> {totalGuest ?? "N/A"}</p>
           </div>
+
           <div className="border border-gray-200 p-4 w-full rounded-md">
             <h2 className="text-xl font-bold">Payment Summary</h2>
-            <p>Total amount paid {totalPrice}</p>
+            <p>Total amount paid: ₱{totalPrice.toLocaleString()}</p>
           </div>
         </div>
+
         <div className="border border-gray-200 p-4 rounded-md">
           <h2 className="text-xl font-bold">What Happen Next?</h2>
           <div className="flex flex-col gap-2">

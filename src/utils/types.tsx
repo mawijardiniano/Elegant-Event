@@ -56,12 +56,17 @@ export type UserContact = {
   number: string;
 };
 
+export type BookingDateTime = {
+  start: string | null; 
+  end?: string | null;   
+  time?: string;  
+}
 
 export type Booking = {
   booking_id: number;
   currentStep: number;
   venue: VenueList;
-  booking_date: string;
+  booking_date: BookingDateTime | null;
   event_type: EventType;
   package: Packages;
   service: Service[] | null;
@@ -75,7 +80,7 @@ export type BookingState = {
   booking_id: number;
   currentStep: number;
   venue: VenueList | null;
-  booking_date: string;
+  booking_date: BookingDateTime | null;
   event_type: EventType | null;
   package: Packages | null;
   service: Service[] | null;

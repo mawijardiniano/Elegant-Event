@@ -11,11 +11,17 @@ export default function StepSix() {
 
   // Redux state
   const venue = useSelector((state: any) => state.booking.venue);
-  const date = useSelector((state: any) => state.booking.booking_date);
+  const bookingDate = useSelector((state: any) => state.booking.booking_date);
   const event = useSelector((state: any) => state.booking.guest_info);
   const contact = useSelector((state: any) => state.booking.contact_info);
   const pkg = useSelector((state: any) => state.booking.package);
   const services = useSelector((state: any) => state.booking.service || []);
+
+  // Extract start date properly
+  let startDate: Date | null = null;
+  if (bookingDate?.start) {
+    startDate = new Date(bookingDate.start);
+  }
 
   const venuePrice = venue?.venue_price || 0;
   const packagePrice = pkg?.package_price || 0;
@@ -24,7 +30,7 @@ export default function StepSix() {
 
   // Handle continue (go to next step)
   const handleContinue = () => {
-    dispatch(setTotalPrice(total))
+    dispatch(setTotalPrice(total));
     dispatch(nextStep());
   };
 
@@ -47,7 +53,18 @@ export default function StepSix() {
           <div className="border border-gray-200 p-4 w-92">
             <h2 className="font-semibold text-lg mb-2">Event Details</h2>
             <p><strong>Venue:</strong> {venue?.venue_name}</p>
-            <p><strong>Date:</strong> {formatted(new Date(date))}</p>
+<p>
+  <strong>Date:</strong>{" "}
+  {startDate
+    ? formatted(startDate) +
+      (bookingDate?.end ? ` - ${formatted(new Date(bookingDate.end))}` : "")
+    : "No date selected"}
+</p>
+<p>
+  <strong>Time:</strong> {bookingDate?.time ?? "No time selected"}
+</p>
+
+
             <p><strong>Expected Guests:</strong> {event?.expected_guest}</p>
             <p><strong>Event Type:</strong> {event?.event_type?.event_type}</p>
             <p><strong>Event Name:</strong> {event?.event_name}</p>
@@ -78,7 +95,7 @@ export default function StepSix() {
                 <p className="font-semibold">Additional Services:</p>
                 <ul className="list-disc list-inside">
                   {services.map((s: any, idx: number) => (
-                    <li className="list-none" key={idx}>
+                    <li key={idx}>
                       {s.serv_name}: ₱{s.serv_price?.toLocaleString() || 0}
                     </li>
                   ))}

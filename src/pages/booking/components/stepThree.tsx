@@ -131,7 +131,7 @@ export default function StepThree() {
 
         <div className="border border-gray-200 p-4 mt-4">
           <div className="flex flex-row justify-between gap-8">
-            <div className="w-full">
+            <div className="w-full pb-2">
               <Label className="mb-1 block">Event Type</Label>
               <Select
                 value={selectedEvent?.event_type}

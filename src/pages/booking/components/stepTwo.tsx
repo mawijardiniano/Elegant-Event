@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   setBookingDate,
@@ -9,19 +9,67 @@ import {
 import ProgressComponent from "./progress";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import type { DateRange } from "react-day-picker";
+import axios from "axios";
+import { addDays, eachDayOfInterval, parseISO } from "date-fns";
 
 export default function StepTwo() {
   const dispatch = useDispatch();
-  const [date, setDate] = useState<Date | undefined>(new Date());
+
+  const [range, setRange] = useState<DateRange | undefined>(undefined);
+  const [time, setTime] = useState<string>("12:00");
   const [showError, setShowError] = useState(false);
+  const [disabledDates, setDisabledDates] = useState<Date[]>([]);
+
+  const fetchBookedDates = async () => {
+    try {
+      console.log("Fetching booked dates...");
+      const res = await axios.get("http://localhost:3000/booking");
+      const dates: Date[] = [];
+
+      res.data.forEach((booking: any) => {
+        const start = parseISO(booking.booking_date);
+        const end = booking.booking_end ? parseISO(booking.booking_end) : start;
+
+        const range = eachDayOfInterval({ start, end });
+        dates.push(...range);
+      });
+
+      console.log("Booked dates fetched:", dates);
+      setDisabledDates(dates);
+    } catch (error) {
+      console.error("Failed to fetch bookings:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookedDates();
+  }, []);
 
   const handleContinue = () => {
-    if (!date) {
+    if (!range?.from) {
+      console.log("No start date selected.");
       setShowError(true);
       return;
     }
 
-    dispatch(setBookingDate(date.toISOString()));
+    const combineDateTime = (date: Date | undefined, timeStr: string): string | null => {
+      if (!date) return null;
+      const [hours, minutes] = timeStr.split(":").map(Number);
+      const combined = new Date(date);
+      combined.setHours(hours, minutes, 0, 0);
+      return combined.toISOString();
+    };
+
+    const bookingStart = combineDateTime(range.from, time);
+    const bookingEnd = range.to ? combineDateTime(range.to, time) : null;
+
+    console.log("Booking Start:", bookingStart);
+    console.log("Booking End:", bookingEnd);
+    console.log("Selected Time:", time);
+
+    dispatch(setBookingDate({ start: bookingStart!, end: bookingEnd, time }));
+
     dispatch(nextStep());
   };
 
@@ -37,41 +85,72 @@ export default function StepTwo() {
       <div className="min-w-[800px] bg-white shadow-md rounded-lg p-6 border border-gray-100">
         <h1 className="font-bold text-2xl">Select Date & Time</h1>
         <p className="text-gray-600 mt-1">
-          Choose the most convenient date for your event.
+          Choose one or two dates for your event and select the start time.
         </p>
 
         <div className="flex flex-col items-center mt-8">
           <div className="border border-gray-200 px-6 py-4 rounded-md">
-            <h1 className="py-2 font-semibold text-center">Select Date</h1>
+            <h1 className="py-2 font-semibold text-center">Select Date(s)</h1>
             <Calendar
-              mode="single"
-              selected={date}
-              onSelect={(selectedDate) => {
-                setDate(selectedDate);
+              mode="range"
+              selected={range}
+              onSelect={(selectedRange) => {
+                console.log("Selected Range:", selectedRange);
+                setRange(selectedRange);
                 setShowError(false);
               }}
-              fromDate={new Date()} // disable past dates
+              fromDate={new Date()}
+              disabled={disabledDates}
               className="rounded-lg border border-gray-200"
+              modifiers={{
+                start: range?.from,
+                end: range?.to,
+              }}
+              modifiersClassNames={{
+                start: "bg-green-500 text-white",
+                end: "bg-blue-500 text-white",
+                disabled: "text-gray-400 cursor-not-allowed",
+              }}
             />
-            {date && (
+
+            {range?.from && (
               <p className="mt-4 text-sm text-gray-600 text-center">
-                Selected Date:{" "}
-                <span className="font-medium">{date.toDateString()}</span>
+                Selected Start Date:{" "}
+                <span className="font-medium">{range.from.toDateString()}</span>
+              </p>
+            )}
+            {range?.to && (
+              <p className="mt-1 text-sm text-gray-600 text-center">
+                Selected End Date:{" "}
+                <span className="font-medium">{range.to.toDateString()}</span>
               </p>
             )}
             {showError && (
               <p className="text-red-500 text-sm text-center mt-2">
-                Please select a date to continue.
+                Please select at least a start date to continue.
               </p>
             )}
           </div>
+
+          <div className="mt-6 w-full max-w-xs">
+            <label htmlFor="time" className="block mb-1 font-medium text-center">
+              Select Start Time
+            </label>
+            <input
+              type="time"
+              id="time"
+              value={time}
+              onChange={(e) => {
+                console.log("Time changed to:", e.target.value);
+                setTime(e.target.value);
+              }}
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
         </div>
 
-        <div className="flex justify-between px-10 pt-8">
-          <Button
-            className="bg-black text-white"
-            onClick={() => dispatch(prevStep())}
-          >
+        <div className="flex justify-between px-10 pt-8 w-full max-w-2xl">
+          <Button className="bg-black text-white" onClick={() => dispatch(prevStep())}>
             Previous
           </Button>
           <Button className="bg-black text-white" onClick={handleContinue}>

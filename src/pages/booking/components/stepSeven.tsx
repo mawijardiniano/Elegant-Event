@@ -17,14 +17,20 @@ export default function StepSeven() {
   const stripe = useStripe();
   const elements = useElements();
 
-  const totalPrice = useSelector((state: RootState) => state.booking.total_price);
   const venue = useSelector((state: RootState) => state.booking.venue);
-  const pkg = useSelector((state: any) => state.booking.package);
-  const services = useSelector((state: any) => state.booking.service || []);
+  const pkg = useSelector((state: RootState) => state.booking.package);
+  const service = useSelector((state: RootState) => state.booking.service);
+  const guestInfo = useSelector((state: RootState) => state.booking.guest_info);
+  const contactInfo = useSelector((state: RootState) => state.booking.contact_info);
+  const booking_date = useSelector((state: RootState) => state.booking.booking_date);
+  const totalPrice = useSelector((state: RootState) => state.booking.total_price);
 
   const venuePrice = venue?.venue_price || 0;
   const packagePrice = pkg?.package_price || 0;
-  const servicesTotal = services.reduce((acc: number, s: any) => acc + (s.serv_price || 0), 0);
+  const servicesTotal = (service || []).reduce(
+    (acc: number, s) => acc + (s.serv_price || 0),
+    0
+  );
   const total = venuePrice + packagePrice + servicesTotal;
 
   const [name, setName] = useState("");
@@ -45,7 +51,6 @@ export default function StepSeven() {
     }
 
     const cardElement = elements.getElement(CardElement) as StripeCardElement | null;
-
     if (!cardElement) {
       setCardError("Card element not found.");
       return;
@@ -61,10 +66,7 @@ export default function StepSeven() {
       });
 
       const data = await res.json();
-
-      if (!data.clientSecret) {
-        throw new Error("clientSecret is missing from backend response");
-      }
+      if (!data.clientSecret) throw new Error("Missing client secret");
 
       const result = await stripe.confirmCardPayment(data.clientSecret, {
         payment_method: {
@@ -75,16 +77,50 @@ export default function StepSeven() {
 
       if (result.error) {
         setCardError(result.error.message || "Payment failed.");
-      } else if (result.paymentIntent?.status === "succeeded") {
-        setCardError(null);
-        dispatch(nextStep()); // ✅ Move to the next step
+        setLoading(false);
+        return;
+      }
+
+      if (result.paymentIntent?.status === "succeeded") {
+        const bookingPayload = {
+          venue_id: venue?.venue_id,
+          package_id: pkg?.package_id ?? null,
+          booking_date,
+          total_price: totalPrice,
+          event_type_id: guestInfo?.event_type?.event_type_id ?? null,
+          expected_guest: guestInfo?.expected_guest ?? 0,
+          event_name: guestInfo?.event_name ?? "",
+          description: guestInfo?.description ?? "",
+          request: guestInfo?.request ?? "",
+          first_name: contactInfo?.first_name ?? "",
+          last_name: contactInfo?.last_name ?? "",
+          email: contactInfo?.email ?? "",
+          number: contactInfo?.number ?? "",
+          services: {
+            create: (service ?? []).map((s) => ({
+              serv_id: s.serv_id,
+            })),
+          },
+        };
+
+        const bookingRes = await fetch("http://localhost:3000/booking/add-booking", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bookingPayload),
+        });
+
+        if (!bookingRes.ok) {
+          throw new Error("Booking creation failed.");
+        }
+
+        dispatch(nextStep());
       }
     } catch (err) {
-      setCardError("Something went wrong.");
       console.error(err);
+      setCardError("Something went wrong.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -145,27 +181,35 @@ export default function StepSeven() {
           {/* Summary */}
           <div className="w-full border border-gray-200 p-4">
             <h2>Order Summary</h2>
-            <p><strong>Venue:</strong> {venue?.venue_name}</p>
+            <p>
+              <strong>Venue:</strong> {venue?.venue_name}
+            </p>
             <p>₱{venuePrice.toLocaleString()}</p>
 
-            {(packagePrice > 0 || services.length > 0) && (
+            {(packagePrice > 0 || (service?.length ?? 0) > 0) && (
               <div>
                 <h2 className="font-semibold text-lg mb-2">Package & Services</h2>
 
                 {packagePrice > 0 && (
                   <>
-                    <p><strong>Package:</strong> {pkg?.package_name}</p>
-                    <p><strong>Package Price:</strong> ₱{packagePrice.toLocaleString()}</p>
+                    <p>
+                      <strong>Package:</strong> {pkg?.package_name}
+                    </p>
+                    <p>
+                      <strong>Package Price:</strong> ₱
+                      {packagePrice.toLocaleString()}
+                    </p>
                   </>
                 )}
 
-                {services.length > 0 && (
+                {service && service.length > 0 && (
                   <div className="mt-2">
                     <p className="font-semibold">Additional Services:</p>
                     <ul className="list-disc list-inside">
-                      {services.map((s: any, idx: number) => (
+                      {service.map((s, idx) => (
                         <li className="list-none" key={idx}>
-                          {s.serv_name}: ₱{s.serv_price?.toLocaleString() || 0}
+                          {s.serv_name}: ₱
+                          {(s.serv_price ?? 0).toLocaleString()}
                         </li>
                       ))}
                     </ul>
@@ -184,6 +228,7 @@ export default function StepSeven() {
           <Button
             className="bg-black text-white"
             onClick={() => dispatch(prevStep())}
+            disabled={loading}
           >
             Previous
           </Button>
