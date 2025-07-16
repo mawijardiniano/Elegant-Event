@@ -58,6 +58,11 @@ model Venue {
   bookings Booking[]
 }
 
+enum BookingStatus {
+  PENDING
+  ACTIVE
+  COMPLETED  
+}
 
 model Booking {
   booking_id     Int        @id @default(autoincrement())
@@ -88,6 +93,7 @@ model Booking {
   number         String 
 
   total_price    Float     @default(0)
+  status         BookingStatus @default(PENDING)
 }
 
 model BookingService {

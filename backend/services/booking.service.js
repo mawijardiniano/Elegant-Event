@@ -1,6 +1,8 @@
 const prisma = require("../config/prisma");
 
 exports.getBookings = async () => {
+  await exports.updateBookingStatuses();
+
   return await prisma.booking.findMany({
     include: {
       venue: true,
@@ -14,6 +16,7 @@ exports.getBookings = async () => {
     },
   });
 };
+
 exports.createBooking = async (data) => {
   const { booking_date, ...rest } = data;
 
@@ -22,7 +25,6 @@ exports.createBooking = async (data) => {
     booking_date: booking_date?.start ? new Date(booking_date.start) : undefined,
     booking_end: booking_date?.end ? new Date(booking_date.end) : undefined,
   };
-
 
   return await prisma.booking.create({
     data: bookingData,
@@ -39,7 +41,6 @@ exports.createBooking = async (data) => {
   });
 };
 
-
 exports.updateBooking = async (id, data) => {
   return await prisma.booking.update({
     where: { booking_id: id },
@@ -51,4 +52,65 @@ exports.deleteBooking = async (id) => {
   return await prisma.booking.delete({
     where: { booking_id: id },
   });
+};
+
+exports.updateBookingStatuses = async () => {
+  const now = new Date();
+  const startOfToday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const endOfToday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+
+  console.log("startOfToday (UTC):", startOfToday.toISOString());
+  console.log("endOfToday (UTC):", endOfToday.toISOString());
+
+  const completed = await prisma.booking.updateMany({
+    where: {
+      AND: [
+        {
+          OR: [
+            { booking_end: { lt: startOfToday } },
+            { booking_end: null, booking_date: { lt: startOfToday } },
+          ],
+        },
+        { status: { not: "COMPLETED" } },
+      ],
+    },
+    data: { status: "COMPLETED" },
+  });
+  console.log("Completed updated:", completed.count);
+
+  const active = await prisma.booking.updateMany({
+    where: {
+      AND: [
+        {
+          OR: [
+            {
+              booking_date: { lte: endOfToday },
+              booking_end: { gte: startOfToday },
+            },
+            {
+              booking_end: null,
+              booking_date: {
+                gte: startOfToday,
+                lt: endOfToday,
+              },
+            },
+          ],
+        },
+        { status: { not: "ACTIVE" } },
+      ],
+    },
+    data: { status: "ACTIVE" },
+  });
+  console.log("Active updated:", active.count);
+
+  const pending = await prisma.booking.updateMany({
+    where: {
+      booking_date: { gt: endOfToday },
+      status: { not: "PENDING" },
+    },
+    data: { status: "PENDING" },
+  });
+  console.log("Pending updated:", pending.count);
+
+  console.log("Booking statuses updated successfully");
 };

@@ -22,10 +22,7 @@ import {
 } from "@/components/ui/card";
 import type { ChartConfig } from "@/components/ui/chart";
 
-import {
-  ChartContainer,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 export const description = "A bar chart showing revenue per month";
 
@@ -89,49 +86,50 @@ export default function ChartBarActive() {
         <CardTitle>Revenue per Month</CardTitle>
         <CardDescription>January - December 2024</CardDescription>
       </CardHeader>
-<CardContent>
-  <ChartContainer config={chartConfig}>
-    <ResponsiveContainer width="100%" height={120}>
-      <BarChart
-        data={chartData}
-        onMouseLeave={() => setActiveIndex(null)}
-        margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
-        maxBarSize={20}
-      >
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="month"
-          tickLine={false}
-          tickMargin={6}
-          axisLine={false}
-          tickFormatter={(value) =>
-            chartConfig[value as keyof typeof chartConfig]?.label || value
-          }
-          height={220}  // Reduced from 200 to 30
-        />
-        <Tooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-        <Bar
-          dataKey="revenue"
-          radius={8}
-          shape={renderCustomBar}
-          onMouseEnter={(_, index) => setActiveIndex(index)}
-          barSize={20}
-        />
-      </BarChart>
-    </ResponsiveContainer>
-  </ChartContainer>
-</CardContent>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <ResponsiveContainer width="100%" height={120}>
+            <BarChart
+              data={chartData}
+              onMouseLeave={() => setActiveIndex(null)}
+              margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
+              maxBarSize={20}
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                tickMargin={6}
+                axisLine={false}
+                tickFormatter={(value) =>
+                  chartConfig[value as keyof typeof chartConfig]?.label || value
+                }
+                height={220}
+              />
+              <Tooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Bar
+                dataKey="revenue"
+                radius={8}
+                shape={renderCustomBar}
+                onMouseEnter={(_, index) => setActiveIndex(index)}
+                barSize={20}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </CardContent>
 
-<CardFooter className="flex-col items-start gap-2 text-sm -mt-54">
-  <div className="flex gap-2 leading-none font-medium">
-    Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-  </div>
-  <div className="text-muted-foreground leading-none">
-    Showing total revenue for the last 12 months
-  </div>
-</CardFooter>
-
-
+      <CardFooter className="flex-col items-start gap-2 text-sm -mt-54">
+        <div className="flex gap-2 leading-none font-medium">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="text-muted-foreground leading-none">
+          Showing total revenue for the last 12 months
+        </div>
+      </CardFooter>
     </Card>
   );
 }
