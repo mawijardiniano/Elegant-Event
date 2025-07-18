@@ -4,6 +4,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { eachDayOfInterval, parseISO } from "date-fns";
 import ChartBarActive from "@/pages/admin/component/barChart";
 import UpcomingEvent from "../component/upcomingEvent";
+import RecentBooking from "../component/recentBooking";
 
 export default function Dashboard() {
   const [booking, setBooking] = useState([]);
@@ -42,8 +43,6 @@ export default function Dashboard() {
   useEffect(() => {
     fetchBooking();
   }, []);
-
-
 
   return (
     <div className="p-8">
@@ -107,13 +106,13 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="col-span-2 ">
           <ChartBarActive />
         </div>
-<UpcomingEvent/>
-
+        <UpcomingEvent />
       </div>
+      <RecentBooking/>
     </div>
   );
 }

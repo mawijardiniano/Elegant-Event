@@ -10,6 +10,9 @@ export default function Sidebar() {
           <Link to="/admin">Dashboard</Link>
         </li>
         <li>
+          <Link to="/admin/bookings">Booking</Link>
+        </li>
+        <li>
           <Link to="/admin/venue">Venues</Link>
         </li>
         <li>

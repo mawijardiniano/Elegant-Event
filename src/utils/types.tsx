@@ -1,5 +1,3 @@
-
-
 export type ProgressProps = {
   step: number;
   totalSteps: number;
@@ -26,7 +24,7 @@ export type Packages = {
   package_name: string;
   package_desc: string;
   package_price: number;
-  features: string[]
+  features: string[];
 };
 
 export type Service = {
@@ -39,7 +37,6 @@ export type EventType = {
   event_type_id: number;
   event_type: string;
 };
-
 
 export type GuestInfo = {
   event_type: EventType | null;
@@ -56,31 +53,28 @@ export type UserContact = {
   number: string;
 };
 
-export type BookingDateTime = {
-  start: string | null; 
-  end?: string | null;   
-  time?: string;  
-}
-
 export type Booking = {
   booking_id: number;
   currentStep: number;
   venue: VenueList;
-  booking_date: BookingDateTime | null;
+  booking_date: string | null;
+  booking_end: string | null;
+  booking_time: string | null;
   event_type: EventType;
   package: Packages;
   service: Service[] | null;
   guest_info: GuestInfo;
   contact_info: UserContact;
+  status: string;
 };
-
-
 
 export type BookingState = {
   booking_id: number;
   currentStep: number;
   venue: VenueList | null;
-  booking_date: BookingDateTime | null;
+  booking_date: string | null;
+  booking_end: string | null;
+  booking_time: string | null;
   event_type: EventType | null;
   package: Packages | null;
   service: Service[] | null;

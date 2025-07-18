@@ -6,6 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 
 import Layout from "@/pages/admin/component/layout/layout";
 import Dashboard from "@/pages/admin/dashboard/dashboard";
+import Bookings from "@/pages/admin/booking/booking";
 import Venue from "@/pages/admin/venues/venue";
 import Settings from "@/pages/admin/settings/settings";
 
@@ -17,9 +18,38 @@ function App() {
       <Routes>
         <Route path="/" element={<Homepage />} />
 
-        <Route path="/admin" element={<Layout><Dashboard /></Layout>} />
-        <Route path="/admin/venue" element={<Layout><Venue /></Layout>} />
-        <Route path="/admin/setting" element={<Layout><Settings /></Layout>} />
+        <Route
+          path="/admin"
+          element={
+            <Layout>
+              <Dashboard />
+            </Layout>
+          }
+        />
+        <Route
+          path="/admin/bookings"
+          element={
+            <Layout>
+              <Bookings />
+            </Layout>
+          }
+        />
+        <Route
+          path="/admin/venue"
+          element={
+            <Layout>
+              <Venue />
+            </Layout>
+          }
+        />
+        <Route
+          path="/admin/setting"
+          element={
+            <Layout>
+              <Settings />
+            </Layout>
+          }
+        />
 
         <Route
           path="/booking"

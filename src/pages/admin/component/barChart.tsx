@@ -81,7 +81,7 @@ export default function ChartBarActive() {
   };
 
   return (
-    <Card className="w-full h-90 mx-auto">
+    <Card className="w-full h-90 mx-auto border border-gray-200">
       <CardHeader>
         <CardTitle>Revenue per Month</CardTitle>
         <CardDescription>January - December 2024</CardDescription>
