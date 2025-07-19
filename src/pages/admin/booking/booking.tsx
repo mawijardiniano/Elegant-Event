@@ -28,19 +28,18 @@ export default function Booking() {
 
   return (
     <div>
-        <h1 className="text-2xl font-bold">Bookings Management</h1>
-        <p>Manage all event bookings and reservations</p>
-        <div className="flex flex-row gap-4 p-4">
-                        <div className="w-full p-4 border border-gray-200">dsa</div>
-                                    <div className="w-full p-4 border border-gray-200">dsa</div>
-                                                <div className="w-full p-4 border border-gray-200">dsa</div>
-                                                            <div className="w-full p-4 border border-gray-200">dsa</div>
-        </div>
+      <h1 className="text-2xl font-bold">Bookings Management</h1>
+      <p>Manage all event bookings and reservations</p>
+      <div className="flex flex-row gap-4 p-4">
+        <div className="w-full p-4 border border-gray-200">dsa</div>
+        <div className="w-full p-4 border border-gray-200">dsa</div>
+        <div className="w-full p-4 border border-gray-200">dsa</div>
+        <div className="w-full p-4 border border-gray-200">dsa</div>
+      </div>
 
-        <div className="p-4">
-              <DataTable columns={columns} data={bookings} />
-        </div>
-    
+      <div className="p-4">
+        <DataTable columns={columns} data={bookings} />
+      </div>
     </div>
   );
 }

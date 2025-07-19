@@ -82,3 +82,14 @@ export type BookingState = {
   contact_info: UserContact | null;
   total_price: number;
 };
+
+// export type VenueState = {
+//   venue_id: number;
+//   venue_name: string;
+//   venue_ratings: number;
+//   venue_desc: string;
+//   venue_capacity: number;
+//   venue_loc: string;
+//   venue_price: number;
+//   tag: Tag[];
+// };
