@@ -31,7 +31,7 @@ export default function Booking() {
       <h1 className="text-2xl font-bold">Bookings Management</h1>
       <p>Manage all event bookings and reservations</p>
       <div className="flex flex-row gap-4 p-4">
-        <div className="w-full p-4 border border-gray-200">dsa</div>
+        <div className="w-full p-4 border border-gray-200">{bookings.length}</div>
         <div className="w-full p-4 border border-gray-200">dsa</div>
         <div className="w-full p-4 border border-gray-200">dsa</div>
         <div className="w-full p-4 border border-gray-200">dsa</div>

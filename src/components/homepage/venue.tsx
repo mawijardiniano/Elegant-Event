@@ -33,11 +33,11 @@ export default function Venue() {
         unique charm and exceptional service.
       </p>
 
-      <div className="flex flex-row flex-wrap justify-center gap-8 mt-8">
+      <div className="flex flex-row flex-wrap justify-center gap-4 mt-8">
         {venueList.map((venue) => (
           <div
             key={venue.venue_id}
-            className="border border-gray-200 min-w-[350px] min-h-[450px] rounded-md flex flex-col overflow-hidden"
+            className="border border-gray-200 max-w-[300px] min-h-[450px] rounded-md flex flex-col overflow-hidden"
           >
             <div className="relative">
               <img

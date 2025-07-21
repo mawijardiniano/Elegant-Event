@@ -21,7 +21,9 @@ export default function Venue() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [bookingCounts, setBookingCounts] = useState<Record<string, number>>({});
+  const [bookingCounts, setBookingCounts] = useState<Record<string, number>>(
+    {}
+  );
   const [revenueMap, setRevenueMap] = useState<Record<string, number>>({});
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -140,7 +142,7 @@ export default function Venue() {
       </div>
 
       <div className="flex flex-row gap-4 py-4">
-        <div className="w-full p-4 border border-gray-200">dsa</div>
+        <div className="w-full p-4 border border-gray-200">{venue.length}</div>
         <div className="w-full p-4 border border-gray-200">dsa</div>
         <div className="w-full p-4 border border-gray-200">dsa</div>
         <div className="w-full p-4 border border-gray-200">dsa</div>
@@ -188,7 +190,6 @@ export default function Venue() {
         ))}
       </div>
 
-      {/* Delete Modal */}
       {isDeleteOpen && venueToDelete && (
         <DeleteModal
           venueId={venueToDelete.venue_id.toString()}
@@ -199,7 +200,7 @@ export default function Venue() {
           onDeleted={() => {
             setIsDeleteOpen(false);
             setVenueToDelete(null);
-            fetchVenue(); // Refresh list after deletion
+            fetchVenue();
           }}
         />
       )}
@@ -207,11 +208,45 @@ export default function Venue() {
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center">
           <div className="w-[500px] bg-white p-6 rounded-md shadow-lg">
-            <h1 className="text-2xl font-bold mb-4">Add Venue</h1>
+            <div className="flex fle-row justify-between">
+              <h1 className="text-2xl font-bold mb-4">Add Venue</h1>
+              <Button className="text-2xl" onClick={closeVenueModal}>
+                X
+              </Button>
+            </div>
+
             <Input
               name="venue_name"
               placeholder="Venue Name"
               value={form.venue_name}
+              onChange={handleChange}
+              className="mb-2"
+            />
+            <Input
+              name="venue_desc"
+              placeholder="Venue Description"
+              value={form.venue_desc}
+              onChange={handleChange}
+              className="mb-2"
+            />
+            <Input
+              name="venue_capacity"
+              placeholder="Venue Capacity"
+              value={form.venue_capacity}
+              onChange={handleChange}
+              className="mb-2"
+            />
+            <Input
+              name="venue_loc"
+              placeholder="Venue Location"
+              value={form.venue_loc}
+              onChange={handleChange}
+              className="mb-2"
+            />
+            <Input
+              name="venue_price"
+              placeholder="Venue Price"
+              value={form.venue_price}
               onChange={handleChange}
               className="mb-2"
             />
@@ -222,7 +257,9 @@ export default function Venue() {
               onChange={handleTagChange}
               className="mb-4"
             />
-            <Button onClick={closeVenueModal}>Close</Button>
+            <div className="w-full flex justify-end">
+              <Button className="bg-black text-white">Submit</Button>
+            </div>
           </div>
         </div>
       )}
@@ -261,7 +298,8 @@ export default function Venue() {
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                    if (currentPage < totalPages)
+                      setCurrentPage(currentPage + 1);
                   }}
                 />
               </PaginationItem>

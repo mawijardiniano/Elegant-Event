@@ -1,11 +1,24 @@
+// package.service.js
 const prisma = require("../config/prisma");
 
 exports.getPackage = async () => {
   const packages = await prisma.package.findMany();
-  return packages.map(pkg => ({
-    ...pkg,
-    features: pkg.features ? JSON.parse(pkg.features) : [],
-  }));
+
+  return packages.map(pkg => {
+    let featuresParsed = [];
+    if (pkg.features) {
+      try {
+        featuresParsed = JSON.parse(pkg.features); 
+      } catch {
+
+        featuresParsed = pkg.features.split(",").map(s => s.trim());
+      }
+    }
+    return {
+      ...pkg,
+      features: featuresParsed,
+    };
+  });
 };
 
 
@@ -21,10 +34,9 @@ exports.deletePackage = async (id) => {
   });
 };
 
-
-exports.editPackage = async (id,data) => {
+exports.editPackage = async (id, data) => {
   return await prisma.package.update({
     where: { package_id: id },
-    data
+    data,
   });
 };

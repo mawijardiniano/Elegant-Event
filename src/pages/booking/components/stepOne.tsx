@@ -71,7 +71,7 @@ export default function StepOne() {
                 selectedVenue === venue.venue_id
                   ? "border-black"
                   : "border-gray-200"
-              } min-w-[150px] min-h-[400px] rounded-md flex flex-col overflow-hidden`}
+              } max-w-[250px] min-h-[400px] rounded-md flex flex-col overflow-hidden`}
             >
               <div className="relative">
                 <img
@@ -95,13 +95,13 @@ export default function StepOne() {
                       ★ {venue.venue_ratings}
                     </span>
                   </div>
-                  <p className="text-gray-500 text-sm mt-2">
+                  <p className="text-gray-500 text-xs mt-2">
                     {venue.venue_desc}
                   </p>
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-gray-500 text-xs">
                     Capacity: {venue.venue_capacity}
                   </p>
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-gray-500 text-xs ">
                     Location: {venue.venue_loc}
                   </p>
                   <div className="flex flex-wrap gap-2 mt-2">

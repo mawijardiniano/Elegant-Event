@@ -8,7 +8,6 @@ import Layout from "@/pages/admin/component/layout/layout";
 import Dashboard from "@/pages/admin/dashboard/dashboard";
 import Bookings from "@/pages/admin/booking/booking";
 import Venue from "@/pages/admin/venues/venue";
-import Settings from "@/pages/admin/settings/settings";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_API!);
 
@@ -42,14 +41,7 @@ function App() {
             </Layout>
           }
         />
-        <Route
-          path="/admin/setting"
-          element={
-            <Layout>
-              <Settings />
-            </Layout>
-          }
-        />
+        
 
         <Route
           path="/booking"
