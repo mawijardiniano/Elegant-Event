@@ -41,9 +41,10 @@ export default function EventPackage() {
             </h2>
 
             <div className="mb-6 text-center">
-              <span className="text-4xl font-bold text-gray-900">
-                ${pkg.package_price.toLocaleString()}
-              </span>
+             <span className="text-4xl font-bold text-gray-900">
+  ${pkg.package_price === 0 ? 1000 : pkg.package_price.toLocaleString()}
+</span>
+
               <p className="text-gray-600 mt-2">{pkg.package_desc}</p>
             </div>
 

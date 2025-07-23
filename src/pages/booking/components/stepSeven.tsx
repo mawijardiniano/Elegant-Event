@@ -62,7 +62,7 @@ export default function StepSeven() {
       const res = await fetch("http://localhost:3000/payment/create-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: totalPrice * 100 }),
+        body: JSON.stringify({ amount: totalPrice * 100, email: contactInfo?.email }),
       });
 
       const data = await res.json();
@@ -139,7 +139,6 @@ export default function StepSeven() {
         </p>
 
         <div className="flex flex-row gap-8">
-          {/* Card Form */}
           <div className="border border-gray-200 p-4 w-full">
             <h2>Card Information</h2>
 
@@ -223,7 +222,6 @@ export default function StepSeven() {
           </div>
         </div>
 
-        {/* Footer Buttons */}
         <div className="flex justify-between px-10 pt-8">
           <Button
             className="bg-black text-white"

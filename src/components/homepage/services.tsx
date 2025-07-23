@@ -63,7 +63,7 @@ export default function Services() {
         We provide everything you need to make your event perfect, from venue to
         catering and beyond.
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-6">
         {services.map((service, index) => (
           <div
             key={index}

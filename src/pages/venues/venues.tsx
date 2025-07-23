@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import Layout from "@/components/layout/layout";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
 import type { VenueList } from "@/utils/types";
 import GrandHall from "@/assets/GrandHall.jpg";
+import { Button } from "@/components/ui/button";
 import { HiUsers, HiLocationMarker } from "react-icons/hi";
 
-export default function Venue() {
+export default function Venues() {
   const API = "http://localhost:3000/venue";
   const [venueList, setVenueList] = useState<VenueList[]>([]);
 
@@ -27,14 +28,20 @@ export default function Venue() {
   }, []);
 
   return (
-    <section className="flex flex-col items-center py-20">
-      <h1 className="text-4xl font-bold">Our Premium Venue</h1>
-      <p className="text-center max-w-xl text-xl font-medium text-gray-400 py-4">
-        Choose from our collection of carefully curated venues, each offering
-        unique charm and exceptional service.
-      </p>
+    <Layout>
+      <div>
+        <section className="w-full pt-12 pb-6 px-4 bg-gray-50">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Venues</h1>
+            <p className="text-lg text-gray-600">
+              Discover the perfect venue for your special event. From intimate
+              gatherings to grand celebrations, we have the ideal space to make
+              your occasion unforgettable.
+            </p>
+          </div>
+        </section>
 
-      <div className="flex flex-row flex-wrap justify-center gap-6 mt-8">
+      <div className="flex flex-row flex-wrap justify-center gap-6 py-8">
         {venueList.map((venue) => (
           <div
             key={venue.venue_id}
@@ -103,10 +110,7 @@ export default function Venue() {
           </div>
         ))}
       </div>
-
-      <div className="pt-10">
-        <Button className="bg-black text-white">View All Venues</Button>
       </div>
-    </section>
+    </Layout>
   );
 }

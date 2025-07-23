@@ -5,16 +5,16 @@ import HeroBg from "@/assets/hero.jpg";
 export default function Hero() {
   return (
     <section className="relative h-screen w-full overflow-hidden">
+      {/* Darken the image using Tailwind's brightness */}
       <img
         src={HeroBg}
         alt="Hero Background"
-        className="absolute top-0 left-0 w-full h-full object-cover"
+        className="absolute top-0 left-0 w-full h-full object-cover brightness-50"
         loading="eager"
       />
 
-   
-      <div className="absolute top-0 left-0 w-full h-full bg-black/60 z-10" />
-
+      {/* Optional: extra soft overlay for depth */}
+      {/* <div className="absolute top-0 left-0 w-full h-full bg-black/40 z-10" /> */}
 
       <div className="relative z-20 flex flex-col h-full items-center justify-center text-center px-4">
         <h1 className="text-5xl md:text-7xl text-white font-bold mb-4">
@@ -31,7 +31,10 @@ export default function Hero() {
           <Button className="bg-white text-black hover:bg-gray-200">
             Book Event Now
           </Button>
-          <Button variant="outline" className="border-white text-white hover:bg-white hover:text-black">
+          <Button
+            variant="outline"
+            className="border-white text-white hover:bg-white hover:text-black"
+          >
             Explore Venues
           </Button>
         </div>
