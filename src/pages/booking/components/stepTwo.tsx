@@ -53,7 +53,10 @@ export default function StepTwo() {
       return;
     }
 
-    const combineDateTime = (date: Date | undefined, timeStr: string): string | null => {
+    const combineDateTime = (
+      date: Date | undefined,
+      timeStr: string
+    ): string | null => {
       if (!date) return null;
       const [hours, minutes] = timeStr.split(":").map(Number);
       const combined = new Date(date);
@@ -88,14 +91,13 @@ export default function StepTwo() {
           Choose one or two dates for your event and select the start time.
         </p>
 
-        <div className="flex flex-col items-center mt-8">
+        <div className="flex flex-row justify-between w-full gap-4 mt-8">
           <div className="border border-gray-200 px-6 py-4 rounded-md">
             <h1 className="py-2 font-semibold text-center">Select Date(s)</h1>
             <Calendar
               mode="range"
               selected={range}
               onSelect={(selectedRange) => {
-                console.log("Selected Range:", selectedRange);
                 setRange(selectedRange);
                 setShowError(false);
               }}
@@ -132,25 +134,41 @@ export default function StepTwo() {
             )}
           </div>
 
-          <div className="mt-6 w-full max-w-xs">
-            <label htmlFor="time" className="block mb-1 font-medium text-center">
-              Select Start Time
-            </label>
-            <input
-              type="time"
-              id="time"
-              value={time}
-              onChange={(e) => {
-                console.log("Time changed to:", e.target.value);
-                setTime(e.target.value);
-              }}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
+          <div className="flex flex-col gap-4 w-full">
+            <div className="border border-gray-200 p-4 rounded-md">
+              <label htmlFor="time" className="block mb-2 font-medium">
+                Select Start Time
+              </label>
+              <input
+                type="time"
+                id="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+
+            <div className="border border-gray-200 p-4 rounded-md bg-gray-50">
+              <h2 className="text-lg font-semibold mb-2">Booking Tips</h2>
+              <ul className="list-disc pl-4 text-sm text-gray-600 space-y-1">
+                <li>Weekends fill up fast—book early!</li>
+                <li>For multi-day events, choose a start and end date.</li>
+                <li>Start time is when your access begins.</li>
+                <li>Venue may be unavailable on holidays.</li>
+                <li>Double-check your selected dates before continuing.</li>
+                <li>You can contact us for custom event setup needs.</li>
+                <li>Consider additional time for setup and cleanup.</li>
+                <li>Confirm the venue’s capacity matches your guest list.</li>
+              </ul>
+            </div>
           </div>
         </div>
 
         <div className="flex justify-between px-10 pt-8 w-full max-w-2xl">
-          <Button className="bg-black text-white" onClick={() => dispatch(prevStep())}>
+          <Button
+            className="bg-black text-white"
+            onClick={() => dispatch(prevStep())}
+          >
             Previous
           </Button>
           <Button className="bg-black text-white" onClick={handleContinue}>

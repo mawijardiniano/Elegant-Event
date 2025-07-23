@@ -10,6 +10,7 @@ import {
   nextStep,
   prevStep,
 } from "@/pages/booking/redux/bookingSlice";
+import { FiPackage, FiCheckCircle, FiCheck, FiPlusCircle } from "react-icons/fi";
 
 export default function StepFour() {
   const dispatch = useDispatch();
@@ -56,7 +57,6 @@ export default function StepFour() {
       return;
     }
 
-
     dispatch(setService(selectedServices)); // Dispatch full Service objects
     dispatch(nextStep());
   };
@@ -97,7 +97,7 @@ export default function StepFour() {
           services.
         </p>
         <p>Choose Your Package</p>
-        <div className="flex flex-row justify-between gap-4">
+        <div className="flex flex-row justify-between gap-2">
           {packages.map((p, index) => (
             <div
               key={index}
@@ -106,16 +106,16 @@ export default function StepFour() {
                 selectedPackage === p.package_id
                   ? "border-black"
                   : "border-gray-200"
-              } min-w-[230px] min-h-[400px] rounded-md flex flex-col overflow-hidden`}
+              } min-w-[200px] min-h-[350px] rounded-md flex flex-col overflow-hidden px-2 py-4`}
             >
-              <p className="text-center">{p.package_name}</p>
-              <p className="text-center">{p.package_desc}</p>
+              <p className="text-center text-xl font-black">{p.package_name}</p>
+              <p className="text-center w-56 text-md text-gray-500">{p.package_desc}</p>
               <p className="text-center">${p.package_price.toFixed(2)}</p>
               <ul className="list-disc ml-6 mt-2">
                 {p.features &&
                   p.features.map((feature: string, i: number) => (
-                    <li className="list-none" key={i}>
-                      {feature}
+                    <li className="list-none flex flex-row gap-2 items-center text-sm" key={i}>
+                     <FiCheck color="blue text-lg"/> {feature}
                     </li>
                   ))}
               </ul>

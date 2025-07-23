@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setVenue, nextStep } from "@/pages/booking/redux/bookingSlice";
-
 import { Button } from "@/components/ui/button";
 import type { VenueList } from "@/utils/types";
 import GrandHall from "@/assets/GrandHall.jpg";
 import axios from "axios";
 import ProgressComponent from "./progress";
+import { HiUsers, HiLocationMarker } from "react-icons/hi";
 
 export default function StepOne() {
   const dispatch = useDispatch();
   const [venueList, setVenueList] = useState<VenueList[]>([]);
   const [selectedVenue, setSelectedVenue] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
 
   const API = "http://localhost:3000/venue";
 
@@ -40,11 +42,16 @@ export default function StepOne() {
   const handleContinue = () => {
     if (selectedVenue !== null) {
       dispatch(nextStep());
-    
     } else {
       alert("Please select a venue before continuing.");
     }
   };
+
+  const totalPages = Math.ceil(venueList.length / itemsPerPage);
+  const paginatedVenues = venueList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className="flex flex-col items-center py-12 px-4">
@@ -62,8 +69,13 @@ export default function StepOne() {
           features and ambiance.
         </p>
 
-        <div className="flex flex-row flex-wrap justify-center gap-8 mt-8">
-          {venueList.map((venue) => (
+        <p className="text-sm text-gray-600 mt-4 mb-2 text-right">
+          Showing {(currentPage - 1) * itemsPerPage + paginatedVenues.length} of{" "}
+          {venueList.length} venues
+        </p>
+
+        <div className="flex flex-row flex-wrap justify-center gap-1 mt-4">
+          {paginatedVenues.map((venue) => (
             <div
               key={venue.venue_id}
               onClick={() => handleSelectVenue(venue)}
@@ -89,21 +101,27 @@ export default function StepOne() {
 
               <div className="p-4 flex flex-col justify-between flex-grow">
                 <div>
-                  <div className="flex flex-row justify-between items-center">
+                  <div className="flex flex-row justify-between items-center mb-2">
                     <h1 className="font-medium">{venue.venue_name}</h1>
                     <span className="text-sm text-yellow-500">
                       ★ {venue.venue_ratings}
                     </span>
                   </div>
-                  <p className="text-gray-500 text-xs mt-2">
+
+                  <p className="text-gray-500 text-xs mb-2 line-clamp-2">
                     {venue.venue_desc}
                   </p>
-                  <p className="text-gray-500 text-xs">
+
+                  <p className="text-gray-600 text-xs flex items-center gap-1">
+                    <HiUsers className="text-base" />
                     Capacity: {venue.venue_capacity}
                   </p>
-                  <p className="text-gray-500 text-xs ">
-                    Location: {venue.venue_loc}
+
+                  <p className="text-gray-600 text-xs flex items-center gap-1">
+                    <HiLocationMarker className="text-base" />
+                    {venue.venue_loc}
                   </p>
+
                   <div className="flex flex-wrap gap-2 mt-2">
                     {venue.tag && venue.tag.length > 0 ? (
                       venue.tag.map((tag, idx) => (
@@ -124,11 +142,31 @@ export default function StepOne() {
           ))}
         </div>
 
-        <div className="w-full items-end justify-end flex px-10 pt-8">
+        {/* Pagination Controls */}
+        <div className="flex justify-between items-center mt-6 px-2">
           <Button
-            className="bg-black text-white"
-            onClick={handleContinue}
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className="text-sm"
           >
+            Previous
+          </Button>
+          <span className="text-gray-500 text-sm">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            disabled={currentPage === totalPages}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            className="text-sm"
+          >
+            Next
+          </Button>
+        </div>
+
+        <div className="w-full items-end justify-end flex px-10 pt-8">
+          <Button className="bg-black text-white" onClick={handleContinue}>
             Continue
           </Button>
         </div>
