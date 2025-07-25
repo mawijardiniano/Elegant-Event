@@ -11,7 +11,7 @@ const upload = multer({ storage });
 
 async function uploadBufferToGCP(buffer, destFileName) {
   const gcpStorage = new Storage({
-    keyFilename: path.join(__dirname, '../config/hopeful-sound-412801-503b6c322e9b.json'),
+    keyFilename: path.join(__dirname, process.env.GOOGLE_SERVICE_KEY),
   });
 
   const bucket = gcpStorage.bucket('elegant_event');
