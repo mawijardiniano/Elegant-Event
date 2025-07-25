@@ -35,7 +35,7 @@ export default function Contact() {
   ];
 
   return (
-    <section className="flex flex-col items-center py-16 px-4">
+    <section className="flex flex-col items-center py-26 px-4">
       <h1 className="text-4xl font-bold mb-2">Get In Touch</h1>
       <p className="text-center max-w-xl text-xl font-medium text-gray-400 mb-8">
         Ready to plan your perfect event? Contact us today and let's make your

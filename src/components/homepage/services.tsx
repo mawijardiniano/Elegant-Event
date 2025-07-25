@@ -57,7 +57,7 @@ export default function Services() {
   ];
 
   return (
-    <section className="flex flex-col items-center  py-20">
+    <section className="flex flex-col items-center  pt-20">
       <h1 className="text-4xl font-bold">Complete Event Solutions</h1>
       <p className="text-center max-w-xl text-xl font-medium text-gray-400 py-4">
         We provide everything you need to make your event perfect, from venue to

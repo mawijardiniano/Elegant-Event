@@ -10,6 +10,7 @@ const venueRouter = require('./routes/venue.routes')
 const tagRouter = require('./routes/tags.routes')
 const bookingRouter = require('./routes/booking.routes')
 const paymentRouter = require('./routes/payment.routes')
+const uploadRoute = require('./routes/upload.routes')
 
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/venue', venueRouter)
 app.use('/tag', tagRouter)
 app.use('/booking', bookingRouter)
 app.use('/payment', paymentRouter)
+app.use('/upload', uploadRoute);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

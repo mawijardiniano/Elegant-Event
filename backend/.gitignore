@@ -3,3 +3,4 @@ node_modules
 .env
 
 /generated/prisma
+/backend/config/hopeful-sound-412801-503b6c322e9b.json

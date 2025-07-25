@@ -22,15 +22,16 @@ export default function EventPackage() {
   }, []);
 
   return (
-    <section className="max-w-6xl mx-auto py-20 px-6">
+    <section className="max-w-6xl mx-auto pt-20 px-6">
       <h1 className="text-4xl font-semibold text-gray-900 text-center mb-6">
         Event Packages
       </h1>
       <p className="text-center max-w-3xl mx-auto text-lg text-gray-600 mb-16">
-        Choose the perfect package for your event. All packages can be customized to meet your specific needs.
+        Choose the perfect package for your event. All packages can be
+        customized to meet your specific needs.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {packageList.map((pkg) => (
           <div
             key={pkg.package_id}
@@ -41,9 +42,12 @@ export default function EventPackage() {
             </h2>
 
             <div className="mb-6 text-center">
-             <span className="text-4xl font-bold text-gray-900">
-  ${pkg.package_price === 0 ? 1000 : pkg.package_price.toLocaleString()}
-</span>
+              <span className="text-4xl font-bold text-gray-900">
+                $
+                {pkg.package_price === 0
+                  ? 1000
+                  : pkg.package_price.toLocaleString()}
+              </span>
 
               <p className="text-gray-600 mt-2">{pkg.package_desc}</p>
             </div>

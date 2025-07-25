@@ -16,6 +16,7 @@ export type VenueList = {
   venue_capacity: number;
   venue_loc: string;
   venue_price: number;
+  venue_img: string;
   tag: Tag[];
 };
 

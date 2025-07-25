@@ -1,11 +1,13 @@
 const venueService = require("../services/venue.service");
+const { uploadBuffer } = require("../services/gcpStorage");
 
 exports.getVenues = async (req, res) => {
   try {
-    const venue = await venueService.getVenues();
-    res.json(venue);
+    const venues = await venueService.getVenues();
+    res.json(venues);
   } catch (error) {
-    console.error("Error fetching venue", error);
+    console.error("Error fetching venues", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -21,21 +23,26 @@ exports.createVenue = async (req, res) => {
       tag_id = []
     } = req.body;
 
-    if (!Array.isArray(tag_id)) {
-      return res.status(400).json({ message: "venue_tags must be an array of tag IDs." });
+    let imageUrl = null;
+
+    if (req.file) {
+      const originalName = req.file.originalname;
+      const destFileName = `images/${Date.now()}-${originalName}`;
+      imageUrl = await uploadBuffer(req.file.buffer, destFileName);
     }
 
     const venue = await venueService.createVenue({
       venue_name,
-      venue_ratings,
+      venue_ratings: parseFloat(venue_ratings),
       venue_desc,
-      venue_capacity,
+      venue_capacity: parseInt(venue_capacity),
       venue_loc,
-      venue_price,
+      venue_price: parseFloat(venue_price),
+      venue_img: imageUrl,
       tag_id
     });
 
-    res.status(200).json(venue);
+    res.status(201).json({ message: "Venue created", venue });
   } catch (error) {
     console.error("Error adding Venue", error);
     res.status(500).json({ message: "Internal server error" });
@@ -56,6 +63,14 @@ exports.editVenue = async (req, res) => {
     } = req.body;
 
     const updateData = {};
+
+
+    if (req.file) {
+      const originalName = req.file.originalname;
+      const destFileName = `images/${Date.now()}-${originalName}`;
+      const imageUrl = await uploadBuffer(req.file.buffer, destFileName);
+      updateData.venue_img = imageUrl;
+    }
 
     if (venue_name !== undefined) updateData.venue_name = venue_name;
     if (venue_ratings !== undefined) updateData.venue_ratings = parseFloat(venue_ratings);
