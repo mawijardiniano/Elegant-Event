@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import type { Booking } from "@/utils/types";
+import { formatted } from "@/lib/dateFormat";
 
 export default function RecentBooking() {
   const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
@@ -30,9 +31,15 @@ export default function RecentBooking() {
         {recentBookings.map((recent, index) => (
           <div className="border border-gray-200 p-4" key={index}>
             <p>{recent.venue?.venue_name}</p>
-            <p>{recent.booking_date}</p>
+            <p>
+              {" "}
+              {recent.booking_date === recent.booking_end
+                ? formatted(recent.booking_date)
+                : `${formatted(recent.booking_date)} - ${formatted(
+                    recent.booking_end
+                  )}`}
+            </p>
             <p>{recent.expected_guest}</p>
-            
           </div>
         ))}
       </div>

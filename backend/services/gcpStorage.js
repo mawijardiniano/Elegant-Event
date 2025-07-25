@@ -1,7 +1,7 @@
 const { Storage } = require('@google-cloud/storage');
 const path = require('path');
 
-const keyPath = path.join(__dirname, '../config/hopeful-sound-412801-503b6c322e9b.json');
+const keyPath = path.join(__dirname, '../config/hopeful-sound-412801-c9d89f4473dc.json');
 const storage = new Storage({ keyFilename: keyPath });
 const bucketName = 'elegant_event';
 const bucket = storage.bucket(bucketName);
