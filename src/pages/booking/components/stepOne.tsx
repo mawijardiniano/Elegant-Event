@@ -74,7 +74,7 @@ export default function StepOne() {
           {venueList.length} venues
         </p>
 
-        <div className="flex flex-row flex-wrap justify-center gap-1 mt-4">
+        <div className="flex flex-row justify-start gap-1 mt-4">
           {paginatedVenues.map((venue) => (
             <div
               key={venue.venue_id}
@@ -141,8 +141,6 @@ export default function StepOne() {
             </div>
           ))}
         </div>
-
-        {/* Pagination Controls */}
         <div className="flex justify-between items-center mt-6 px-2">
           <Button
             disabled={currentPage === 1}

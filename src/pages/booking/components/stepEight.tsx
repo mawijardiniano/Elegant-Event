@@ -6,6 +6,15 @@ import { formatted } from "@/lib/dateFormat";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { resetBooking } from "../redux/bookingSlice";
+import {
+  HiLocationMarker,
+  HiCalendar,
+  HiClock,
+  HiUsers,
+  HiMail,
+  HiPhone,
+} from "react-icons/hi";
+import { FiCheckCircle } from "react-icons/fi";
 
 export default function StepEight() {
   const dispatch = useDispatch();
@@ -17,8 +26,8 @@ export default function StepEight() {
   const totalGuest = useSelector((state: RootState) => state.booking.guest_info?.expected_guest);
 
   const handleGoHome = () => {
-    dispatch(resetBooking()); 
-    navigate("/"); 
+    dispatch(resetBooking());
+    navigate("/");
   };
 
   const startDate = bookingDate?.start ? new Date(bookingDate.start) : null;
@@ -35,80 +44,104 @@ export default function StepEight() {
       <ProgressComponent step={8} totalSteps={8} />
 
       <div className="min-w-[800px] bg-white shadow-md rounded-lg p-6 border border-gray-100">
-        <h2 className="text-center text-2xl font-bold">Booking Confirmed!</h2>
+        <h2 className="text-center text-2xl font-bold flex justify-center items-center gap-2 text-green-600">
+          <FiCheckCircle className="text-3xl" /> Booking Confirmed!
+        </h2>
         <p className="text-center text-gray-600 text-md">
           Your event reservation has been successfully processed.
         </p>
+
         <div className="flex flex-row gap-4 my-6">
           <div className="border border-gray-200 p-4 w-full rounded-md">
-            <h2 className="text-xl font-bold">Event Details</h2>
-            <p>{venue?.venue_name}</p>
-            <p>{venue?.venue_loc}</p>
-
-            <p>
-              <strong>Date:</strong>{" "}
+            <h2 className="text-xl font-bold mb-2">Event Details</h2>
+            <p className="flex items-center gap-2">
+              <HiLocationMarker className="text-lg text-gray-700" />
+              {venue?.venue_name}
+            </p>
+            <p className="ml-6 text-sm text-gray-500">{venue?.venue_loc}</p>
+            <p className="flex items-center gap-2 mt-2">
+              <HiCalendar className="text-lg text-gray-700" />
               {startDate ? formatted(startDate) : "No date selected"}
               {endDate && endDate.getTime() !== startDate?.getTime()
                 ? ` - ${formatted(endDate)}`
                 : ""}
             </p>
-
-            <p>
-              <strong>Time:</strong> {time || "No time selected"}
+            <p className="flex items-center gap-2 mt-1">
+              <HiClock className="text-lg text-gray-700" />
+              {time || "No time selected"}
             </p>
-
-            <p><strong>Expected Guests:</strong> {totalGuest ?? "N/A"}</p>
+            <p className="flex items-center gap-2 mt-1">
+              <HiUsers className="text-lg text-gray-700" />
+              {totalGuest ?? "N/A"} guests
+            </p>
           </div>
 
           <div className="border border-gray-200 p-4 w-full rounded-md">
-            <h2 className="text-xl font-bold">Payment Summary</h2>
-            <p>Total amount paid: ₱{totalPrice.toLocaleString()}</p>
+            <h2 className="text-xl font-bold mb-2">Payment Summary</h2>
+            <p className="flex items-center gap-2 text-lg font-medium">
+              <FiCheckCircle className="text-green-600" />
+              Total amount paid: ₱{totalPrice.toLocaleString()}
+            </p>
           </div>
         </div>
 
-        <div className="border border-gray-200 p-4 rounded-md">
-          <h2 className="text-xl font-bold">What Happen Next?</h2>
-          <div className="flex flex-col gap-2">
+        <div className="border border-gray-200 p-4 rounded-md mt-6">
+          <h2 className="text-xl font-bold">What Happens Next?</h2>
+          <div className="flex flex-col gap-4 mt-2">
             <div>
-              <h3 className="font-medium">Confirmation Email</h3>
-              <p className="text-sm text-gray-600">
-                You'll receive a detailed confirmation email within 5 minutes at
-                gdf
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-medium">Event Coordinator Contact</h3>
-              <p className="text-sm text-gray-600">
-                Our event coordinator will call you within 24 hours to discuss
-                details and finalize arrangements
+              <h3 className="font-medium flex items-center gap-2">
+                <HiMail className="text-lg text-gray-600" />
+                Confirmation Email
+              </h3>
+              <p className="text-sm text-gray-600 ml-6">
+                You’ll receive a detailed confirmation email within 5 minutes.
               </p>
             </div>
             <div>
-              <h3 className="font-medium">Final Planning</h3>
-              <p className="text-sm text-gray-600">
-                We'll work with you to finalize all details 2 weeks before your
-                event date
+              <h3 className="font-medium flex items-center gap-2">
+                <HiPhone className="text-lg text-gray-600" />
+                Event Coordinator Contact
+              </h3>
+              <p className="text-sm text-gray-600 ml-6">
+                Our coordinator will call you within 24 hours to finalize details.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-medium flex items-center gap-2">
+                <HiCalendar className="text-lg text-gray-600" />
+                Final Planning
+              </h3>
+              <p className="text-sm text-gray-600 ml-6">
+                We’ll coordinate final plans 2 weeks before your event.
               </p>
             </div>
           </div>
         </div>
-        <div className="border border-gray-200 p-4 rounded-md">
-          <h2 className="text-xl font-bold">Need Help?</h2>
-          <div className="flex flex-row ">
-            <div className="w-full border border-gray-200 p-4 rounded-md">
-              <h2>Call Us</h2>
-              <p>093282345</p>
+
+        <div className="border border-gray-200 p-4 rounded-md mt-6">
+          <h2 className="text-xl font-bold mb-2">Need Help?</h2>
+          <div className="flex flex-row gap-4">
+            <div className="w-full border border-gray-200 p-4 rounded-md flex items-center gap-2">
+              <HiPhone className="text-xl text-gray-600" />
+              <div>
+                <h2 className="font-medium">Call Us</h2>
+                <p className="text-sm">093282345</p>
+              </div>
             </div>
-            <div className="w-full border border-gray-200 p-4 rounded-md">
-              <h2>Email Us</h2>
-              <p>events@elegantevents.com</p>
+            <div className="w-full border border-gray-200 p-4 rounded-md flex items-center gap-2">
+              <HiMail className="text-xl text-gray-600" />
+              <div>
+                <h2 className="font-medium">Email Us</h2>
+                <p className="text-sm">events@elegantevents.com</p>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="mt-6 flex justify-end">
-          <Button className="bg-black text-white" onClick={handleGoHome}>Go to Home</Button>
+          <Button className="bg-black text-white" onClick={handleGoHome}>
+            Go to Home
+          </Button>
         </div>
       </div>
     </div>

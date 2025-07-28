@@ -3,7 +3,7 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import type { VenueList } from "@/utils/types";
 import { HiUsers, HiLocationMarker } from "react-icons/hi";
-
+import { Link, useLocation, useNavigate } from "react-router-dom";
 export default function Venue() {
   const API = "http://localhost:3000/venue";
   const [venueList, setVenueList] = useState<VenueList[]>([]);
@@ -34,7 +34,7 @@ export default function Venue() {
           unique charm and exceptional service.
         </p>
 
-        <div className="flex flex-wrap justify-center gap-6 mt-8">
+        <div className="flex flex-wrap justify-center gap-4 mt-8">
           {venueList.slice(0, 3).map((venue) => (
             <div
               key={venue.venue_id}
@@ -103,7 +103,10 @@ export default function Venue() {
         </div>
 
         <div className="pt-10 text-center">
-          <Button className="bg-black text-white">View All Venues</Button>
+          <Link to={'/venue'}>
+            <Button  className="bg-black text-white">View All Venues</Button>
+          </Link>
+        
         </div>
       </div>
     </section>

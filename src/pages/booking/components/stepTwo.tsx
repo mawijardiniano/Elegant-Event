@@ -101,8 +101,17 @@ export default function StepTwo() {
                 setRange(selectedRange);
                 setShowError(false);
               }}
-              fromDate={new Date()}
-              disabled={disabledDates}
+              disabled={(date) => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const isPast = date < today;
+
+                const isBooked = disabledDates.some(
+                  (d) => d.toDateString() === date.toDateString()
+                );
+
+                return isPast || isBooked;
+              }}
               className="rounded-lg border border-gray-200"
               modifiers={{
                 start: range?.from,

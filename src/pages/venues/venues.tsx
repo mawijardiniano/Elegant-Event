@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/layout";
 import axios from "axios";
 import type { VenueList } from "@/utils/types";
-import GrandHall from "@/assets/GrandHall.jpg";
 import { Button } from "@/components/ui/button";
 import { HiUsers, HiLocationMarker } from "react-icons/hi";
 
 export default function Venues() {
   const API = "http://localhost:3000/venue";
   const [venueList, setVenueList] = useState<VenueList[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8; 
 
   const fetchVenue = async () => {
     try {
@@ -27,24 +28,32 @@ export default function Venues() {
     fetchVenue();
   }, []);
 
+  const totalPages = Math.ceil(venueList.length / itemsPerPage);
+  const paginatedVenues = venueList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <Layout>
       <div>
         <section className="w-full pt-12 pb-6 px-4 bg-gray-50">
           <div className="max-w-4xl mx-auto text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Our Venues
-            </h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Venues</h1>
             <p className="text-lg text-gray-600">
               Discover the perfect venue for your special event. From intimate
               gatherings to grand celebrations, we have the ideal space to make
               your occasion unforgettable.
             </p>
+            <p className="text-sm text-gray-500 mt-2">
+              Showing {(currentPage - 1) * itemsPerPage + paginatedVenues.length} of{" "}
+              {venueList.length} venues
+            </p>
           </div>
         </section>
 
-        <div className="flex flex-row flex-wrap justify-center gap-6 py-8">
-          {venueList.map((venue) => (
+        <div className="flex flex-row flex-wrap justify-center gap-4 py-8">
+          {paginatedVenues.map((venue) => (
             <div
               key={venue.venue_id}
               className="border border-gray-200 w-full max-w-xs min-h-[450px] rounded-lg flex flex-col overflow-hidden shadow-sm"
@@ -52,7 +61,7 @@ export default function Venues() {
               <div className="relative">
                 <img
                   src={venue.venue_img}
-                  alt="Grand Hall"
+                  alt={venue.venue_name}
                   className="w-full h-52 object-cover"
                 />
                 <div className="absolute top-2 left-2">
@@ -87,7 +96,7 @@ export default function Venues() {
                     </p>
 
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {venue.tag && venue.tag.length > 0 ? (
+                      {venue.tag.length > 0 ? (
                         venue.tag.map(
                           (tag: { tag_name: string }, idx: number) => (
                             <span
@@ -111,6 +120,28 @@ export default function Venues() {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="flex justify-end gap-6 pb-16 px-20">
+          <Button 
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className="bg-gray-200 text-black"
+          >
+            Previous
+          </Button>
+
+          <span className="text-gray-500 text-sm self-center">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <Button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            className="bg-gray-200 text-black"
+          >
+            Next
+          </Button>
         </div>
       </div>
     </Layout>

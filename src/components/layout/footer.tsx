@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { HiPhone, HiMail, HiLocationMarker } from "react-icons/hi";
 
 export default function Footer() {
   const navigate = useNavigate();
@@ -21,52 +22,66 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gray-200 px-8 py-10">
-      <div className="grid grid-cols-4 gap-8">
+    <footer className="bg-gray-100 text-gray-700 px-8 py-12 mt-10">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        {/* Brand Info */}
         <div>
-          <h1 className="font-medium text-xl">Elegant Event</h1>
-          <p className="w-60">
-            Creating unforgettable moments with premium event venues and
-            exceptional service.
+          <h1 className="font-bold text-2xl text-black mb-2">Elegant Event</h1>
+          <p className="text-sm leading-relaxed">
+            Creating unforgettable moments with premium venues and exceptional services.
           </p>
         </div>
 
+        {/* Quick Links */}
         <div>
-          <h1 className="font-medium text-xl">Quick Links</h1>
-          <ul className="flex flex-col gap-4">
+          <h2 className="font-semibold text-lg text-black mb-3">Quick Links</h2>
+          <ul className="flex flex-col gap-2 text-sm">
             <li>
-              <Link to="/venue">Venues</Link>
+              <Link to="/venue" className="hover:text-black transition-colors">Venues</Link>
             </li>
             <li>
-              <button onClick={() => handleNavClick("service")} className="text-left">
+              <button onClick={() => handleNavClick("service")} className="text-left hover:text-black transition-colors">
                 Services
               </button>
             </li>
             <li>
-              <button onClick={() => handleNavClick("contact")} className="text-left">
+              <button onClick={() => handleNavClick("contact")} className="text-left hover:text-black transition-colors">
                 Contact
               </button>
             </li>
           </ul>
         </div>
 
+        {/* Services */}
         <div>
-          <h1 className="font-medium text-xl">Services</h1>
-          <ul className="text-sm text-gray-600 pt-2">
-            <li>Event Planning</li>
-            <li>Venue Decoration</li>
-            <li>Catering Services</li>
+          <h2 className="font-semibold text-lg text-black mb-3">Services</h2>
+          <ul className="text-sm space-y-2 text-gray-600">
+            <li>🎉 Event Planning</li>
+            <li>🎨 Venue Decoration</li>
+            <li>🍽 Catering Services</li>
           </ul>
         </div>
 
+        {/* Contact Info */}
         <div>
-          <h1 className="font-medium text-xl">Contact Info</h1>
-          <ul className="text-sm text-gray-600 pt-2">
-            <li>📞 0932-823-45xx</li>
-            <li>📧 info@elegantevent.com</li>
-            <li>📍 Makati City, PH</li>
+          <h2 className="font-semibold text-lg text-black mb-3">Contact Info</h2>
+          <ul className="text-sm space-y-2 text-gray-600">
+            <li className="flex items-center gap-2">
+              <HiPhone /> 0932-823-45xx
+            </li>
+            <li className="flex items-center gap-2">
+              <HiMail /> events@elegantevents.com
+            </li>
+            <li className="flex items-center gap-2">
+              <HiLocationMarker /> Makati City, PH
+            </li>
           </ul>
         </div>
+      </div>
+
+      {/* Footer bottom */}
+      <div className="mt-10 text-center text-sm text-gray-500">
+        © {new Date().getFullYear()} Elegant Event. All rights reserved.
       </div>
     </footer>
   );

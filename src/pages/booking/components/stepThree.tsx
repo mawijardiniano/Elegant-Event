@@ -132,7 +132,9 @@ export default function StepThree() {
         <div className="border border-gray-200 p-4 mt-4">
           <div className="flex flex-row justify-between gap-8">
             <div className="w-full pb-2">
-              <Label className="mb-1 block">Event Type</Label>
+              <Label className="mb-1 block">
+                Event Type<span className="text-red-500 ">*</span>
+              </Label>
               <Select
                 value={selectedEvent?.event_type}
                 onValueChange={(value) => {
@@ -144,10 +146,10 @@ export default function StepThree() {
                   markTouched("event_type");
                 }}
               >
-                <SelectTrigger className="w-[350px]">
+                <SelectTrigger className="w-[350px] border border-gray-300">
                   <SelectValue placeholder="Choose Event Type" />
                 </SelectTrigger>
-                <SelectContent className="bg-white">
+                <SelectContent className="bg-white border border-gray-200">
                   {events.map((event) => (
                     <SelectItem
                       key={event.event_type_id}
@@ -159,14 +161,20 @@ export default function StepThree() {
                 </SelectContent>
               </Select>
               {touched.event_type && formErrors.event_type && (
-                <p className="text-red-500 text-sm mt-1">{formErrors.event_type}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {formErrors.event_type}
+                </p>
               )}
             </div>
 
             <div className="w-full">
-              <Label className="mb-1 block">Expected Guest Count</Label>
+              <Label className="mb-1 block">
+                Expected Guest Count<span className="text-red-500 ">*</span>
+              </Label>
               <Input
+              
                 value={guestCount}
+                className="border border-gray-300"
                 onChange={(e) => {
                   setGuestCount(e.target.value);
                   validateForm({ expected_guest: e.target.value });
@@ -181,39 +189,42 @@ export default function StepThree() {
             </div>
           </div>
           <div className="flex flex-col gap-1">
+            <Label className="mb-1 block">
+              Event Name<span className="text-red-500 ">*</span>
+            </Label>
+            <Input
 
-          <Label className="mb-1 block">Event Name</Label>
-          <Input
-            className="w-full"
-            value={eventName}
-            onChange={(e) => {
-              setEventName(e.target.value);
-              validateForm({ event_name: e.target.value });
-            }}
-            onBlur={() => markTouched("event_name")}
-          />
-          {touched.event_name && formErrors.event_name && (
-            <p className="text-red-500 text-sm mt-1">{formErrors.event_name}</p>
-          )}
+              className="w-full border border-gray-300"
+              value={eventName}
+              onChange={(e) => {
+                setEventName(e.target.value);
+                validateForm({ event_name: e.target.value });
+              }}
+              onBlur={() => markTouched("event_name")}
+            />
+            {touched.event_name && formErrors.event_name && (
+              <p className="text-red-500 text-sm mt-1">
+                {formErrors.event_name}
+              </p>
+            )}
 
-          <Label className="mb-1 block">Event Description</Label>
-          <Textarea
-            className="w-full"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
+            <Label className="mb-1 block">Event Description</Label>
+            <Textarea
+              className="w-full  border border-gray-300"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
 
-          <Label className="mb-1 block">
-            Special Requests or Accommodations
-          </Label>
-          <Textarea
-            className="w-full"
-            value={request}
-            onChange={(e) => setRequest(e.target.value)}
-          />
-        </div>
-                    
+            <Label className="mb-1 block">
+              Special Requests or Accommodations
+            </Label>
+            <Textarea
+              className="w-full  border border-gray-300"
+              value={request}
+              onChange={(e) => setRequest(e.target.value)}
+            />
           </div>
+        </div>
 
         <div className="flex justify-between px-10 pt-8">
           <Button

@@ -10,7 +10,7 @@ import {
   nextStep,
   prevStep,
 } from "@/pages/booking/redux/bookingSlice";
-import { FiPackage, FiCheckCircle, FiCheck, FiPlusCircle } from "react-icons/fi";
+import { FiCheck } from "react-icons/fi";
 
 export default function StepFour() {
   const dispatch = useDispatch();
@@ -19,21 +19,33 @@ export default function StepFour() {
 
   const [packages, setPackages] = useState<Packages[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-
   const [selectedPackage, setSelectedPackage] = useState<number | null>(null);
   const [selectedServices, setSelectedServices] = useState<Service[]>([]);
 
-  const fetchService = async () => {
-    try {
-      const res = await axios.get(SERVICE_API);
-      setServices(res.data);
-    } catch (error) {
-      console.error("Error fetching services", error);
-    }
-  };
-
   useEffect(() => {
-    fetchService();
+    const fetchAll = async () => {
+      try {
+        const [pkgRes, serviceRes] = await Promise.all([
+          axios.get(PACKAGE_API),
+          axios.get(SERVICE_API),
+        ]);
+
+        const packagesWithParsedFeatures = pkgRes.data.map((pkg: Packages) => ({
+          ...pkg,
+          features:
+            typeof pkg.features === "string"
+              ? pkg.features.split(",").map((f: string) => f.trim())
+              : pkg.features,
+        }));
+
+        setPackages(packagesWithParsedFeatures);
+        setServices(serviceRes.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchAll();
   }, []);
 
   const handleSelectPackage = (pkg: Packages) => {
@@ -42,13 +54,11 @@ export default function StepFour() {
   };
 
   const handleServiceToggle = (service: Service) => {
-    setSelectedServices((prev) => {
-      if (prev.find((s) => s.serv_id === service.serv_id)) {
-        return prev.filter((s) => s.serv_id !== service.serv_id);
-      } else {
-        return [...prev, service];
-      }
-    });
+    setSelectedServices((prev) =>
+      prev.find((s) => s.serv_id === service.serv_id)
+        ? prev.filter((s) => s.serv_id !== service.serv_id)
+        : [...prev, service]
+    );
   };
 
   const handleContinue = () => {
@@ -57,29 +67,9 @@ export default function StepFour() {
       return;
     }
 
-    dispatch(setService(selectedServices)); // Dispatch full Service objects
+    dispatch(setService(selectedServices));
     dispatch(nextStep());
   };
-  const fetchPackage = async () => {
-    try {
-      const res = await axios.get(PACKAGE_API);
-      const packagesWithParsedFeatures = res.data.map((pkg: Packages) => ({
-        ...pkg,
-        features:
-          typeof pkg.features === "string"
-            ? pkg.features.split(",").map((f: string) => f.trim())
-            : pkg.features,
-      }));
-
-      setPackages(packagesWithParsedFeatures);
-    } catch (error) {
-      console.error("Error fetching packages", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchPackage();
-  }, []);
 
   return (
     <div className="flex flex-col items-center py-12 px-4">
@@ -96,42 +86,48 @@ export default function StepFour() {
           Choose the package that best fits your needs and add any additional
           services.
         </p>
-        <p>Choose Your Package</p>
-        <div className="flex flex-row justify-between gap-2">
-          {packages.map((p, index) => (
-            <div
-              key={index}
-              onClick={() => handleSelectPackage(p)}
-              className={`cursor-pointer border-2 ${
-                selectedPackage === p.package_id
-                  ? "border-black"
-                  : "border-gray-200"
-              } min-w-[200px] min-h-[350px] rounded-md flex flex-col overflow-hidden px-2 py-4`}
-            >
-              <p className="text-center text-xl font-black">{p.package_name}</p>
-              <p className="text-center w-56 text-md text-gray-500">{p.package_desc}</p>
-              <p className="text-center">${p.package_price.toFixed(2)}</p>
-              <ul className="list-disc ml-6 mt-2">
-                {p.features &&
-                  p.features.map((feature: string, i: number) => (
-                    <li className="list-none flex flex-row gap-2 items-center text-sm" key={i}>
-                     <FiCheck color="blue text-lg"/> {feature}
-                    </li>
-                  ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+
+        <p className="mt-6 text-lg font-medium">Choose Your Package</p>
+      <div className="flex flex-row flex-wrap justify-start gap-4 mt-2">
+  {packages.map((p) => (
+    <div
+      key={p.package_id}
+      onClick={() => handleSelectPackage(p)}
+      className={`cursor-pointer border-2 ${
+        selectedPackage === p.package_id
+          ? "border-black"
+          : "border-gray-200"
+      } w-[250px] min-h-[350px] rounded-md p-4 hover:shadow-md transition`}
+    >
+      <p className="text-center text-xl font-bold mb-1">{p.package_name}</p>
+      <p className="text-center text-xl font-bold mb-1">
+        {p.package_price === 0
+          ? "(Included)"
+          : "₱" + p.package_price.toFixed(2)}
+      </p>
+      <p className="text-center text-gray-500 text-xs">{p.package_desc}</p>
+
+      <ul className="mt-2 space-y-1">
+        {p.features?.map((feature: string, i: number) => (
+          <li key={i} className="flex items-center text-sm gap-2">
+            <FiCheck className="text-blue-500" />
+            {feature}
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</div>
 
         <div className="pt-8">
           <h2 className="text-xl font-semibold mb-4">
             Select Additional Services
           </h2>
           <div className="grid grid-cols-2 gap-4">
-            {services.map((service, index) => (
+            {services.map((service) => (
               <label
-                key={index}
-                className="border border-gray-200 p-4 flex items-center cursor-pointer"
+                key={service.serv_id}
+                className="border border-gray-200 p-4 flex items-center gap-3 cursor-pointer rounded-md hover:border-black transition"
               >
                 <input
                   type="checkbox"
@@ -139,18 +135,20 @@ export default function StepFour() {
                     (s) => s.serv_id === service.serv_id
                   )}
                   onChange={() => handleServiceToggle(service)}
-                  className="mr-3"
+                  className="accent-black"
                 />
-
                 <div>
                   <h3 className="font-medium">{service.serv_name}</h3>
-                  <p>${service.serv_price.toFixed(2)}</p>
+                  <p className="text-sm text-gray-600">
+                    ₱{service.serv_price.toFixed(2)}
+                  </p>
                 </div>
               </label>
             ))}
           </div>
         </div>
 
+        {/* Navigation Buttons */}
         <div className="flex justify-between px-10 pt-8">
           <Button
             className="bg-black text-white"

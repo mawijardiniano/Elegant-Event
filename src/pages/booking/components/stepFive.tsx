@@ -18,14 +18,14 @@ const phoneNumber = z
   .max(15, "Number is too long")
   .regex(/^[0-9]+$/, "Phone number must contain only digits");
 
-  const name = z.string()
+const name = z.string();
 
 export default function StepFive() {
   const dispatch = useDispatch();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  
+
   const [email, setEmail] = useState("");
   const [touched, setTouched] = useState(false);
   const showError = touched && email.length > 0 && !isGmail(email);
@@ -47,7 +47,6 @@ export default function StepFive() {
     [firstName, lastName, email, number].every(
       (field) => field.trim() !== ""
     ) && agreedToTerms;
-
 
   const validateNumber = (value: string) => {
     try {
@@ -72,11 +71,10 @@ export default function StepFive() {
       return;
     }
 
-       if (numberError) {
+    if (numberError) {
       alert(numberError);
       return;
     }
-
 
     if (!agreedToTerms) {
       alert("You must agree to the Terms of Service and Privacy Policy.");
@@ -118,6 +116,7 @@ export default function StepFive() {
             <div className="w-full">
               <Label className="mb-1 block">First Name</Label>
               <Input
+                className="border border-gray-300"
                 placeholder="Enter your First Name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
@@ -126,6 +125,7 @@ export default function StepFive() {
             <div className="w-full">
               <Label className="mb-1 block">Last Name</Label>
               <Input
+                className="border border-gray-300"
                 placeholder="Enter your Last Name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
@@ -137,6 +137,7 @@ export default function StepFive() {
             <div className="w-full">
               <Label className="mb-2 block">Email</Label>
               <Input
+                className="border border-gray-300"
                 placeholder="Enter your Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -151,15 +152,16 @@ export default function StepFive() {
 
             <div className="w-full">
               <Label className="mb-2 block">Number</Label>
-                       <Input
-            placeholder="Enter your Phone Number"
-            value={number}
-            onChange={handleNumberChange}
-            onBlur={() => setTouchedNumber(true)}
-          />
-          {touchedNumber && numberError && (
-            <p style={{ color: "red", marginTop: 4 }}>{numberError}</p>
-          )}
+              <Input
+                className="border border-gray-300"
+                placeholder="Enter your Phone Number"
+                value={number}
+                onChange={handleNumberChange}
+                onBlur={() => setTouchedNumber(true)}
+              />
+              {touchedNumber && numberError && (
+                <p style={{ color: "red", marginTop: 4 }}>{numberError}</p>
+              )}
             </div>
           </div>
 
@@ -169,6 +171,7 @@ export default function StepFive() {
             <div className="w-full">
               <Label className="mb-2 block">Street</Label>
               <Input
+                className="border border-gray-300"
                 value={street}
                 onChange={(e) => setStreet(e.target.value)}
               />
@@ -176,6 +179,7 @@ export default function StepFive() {
             <div className="w-full">
               <Label className="mb-2 block">Barangay</Label>
               <Input
+                className="border border-gray-300"
                 value={barangay}
                 onChange={(e) => setBarangay(e.target.value)}
               />
@@ -186,6 +190,7 @@ export default function StepFive() {
             <div className="w-full">
               <Label className="mb-2 block">Municipality</Label>
               <Input
+                className="border border-gray-300"
                 value={municipality}
                 onChange={(e) => setMunicipality(e.target.value)}
               />
@@ -193,13 +198,18 @@ export default function StepFive() {
             <div className="w-full">
               <Label className="mb-2 block">Province/City</Label>
               <Input
+                className="border border-gray-300"
                 value={province}
                 onChange={(e) => setProvince(e.target.value)}
               />
             </div>
             <div className="w-full">
               <Label className="mb-2 block">Zip Code</Label>
-              <Input value={zip} onChange={(e) => setZip(e.target.value)} />
+              <Input
+                className="border border-gray-300"
+                value={zip}
+                onChange={(e) => setZip(e.target.value)}
+              />
             </div>
           </div>
 
@@ -235,28 +245,26 @@ export default function StepFive() {
             </label>
           </div>
         </div>
-         <div className="flex justify-between px-10 pt-8">
-        <Button
-          className="bg-black text-white"
-          onClick={() => dispatch(prevStep())}
-        >
-          Previous
-        </Button>
-        <Button
-          className={`text-white ${
-            isFormValid
-              ? "bg-black hover:bg-gray-800"
-              : "bg-gray-600 cursor-not-allowed"
-          }`}
-          disabled={!isFormValid}
-          onClick={handleContinue}
-        >
-          Continue
-        </Button>
+        <div className="flex justify-between px-10 pt-8">
+          <Button
+            className="bg-black text-white"
+            onClick={() => dispatch(prevStep())}
+          >
+            Previous
+          </Button>
+          <Button
+            className={`text-white ${
+              isFormValid
+                ? "bg-black hover:bg-gray-800"
+                : "bg-gray-600 cursor-not-allowed"
+            }`}
+            disabled={!isFormValid}
+            onClick={handleContinue}
+          >
+            Continue
+          </Button>
+        </div>
       </div>
-      </div>
-
-     
     </div>
   );
 }

@@ -3,13 +3,24 @@ import ProgressComponent from "./progress";
 import { useSelector, useDispatch } from "react-redux";
 import { formatted } from "@/lib/dateFormat";
 import { Separator } from "@/components/ui/separator";
-import { prevStep, nextStep, setTotalPrice } from "@/pages/booking/redux/bookingSlice";
+import {
+  prevStep,
+  nextStep,
+  setTotalPrice,
+} from "@/pages/booking/redux/bookingSlice";
 import { Button } from "@/components/ui/button";
+import {
+  HiUsers,
+  HiLocationMarker,
+  HiCalendar,
+  HiClock,
+  HiPhone,
+  HiMail,
+} from "react-icons/hi";
 
 export default function StepSix() {
   const dispatch = useDispatch();
 
-  // Redux state
   const venue = useSelector((state: any) => state.booking.venue);
   const bookingDate = useSelector((state: any) => state.booking.booking_date);
   const event = useSelector((state: any) => state.booking.guest_info);
@@ -17,7 +28,6 @@ export default function StepSix() {
   const pkg = useSelector((state: any) => state.booking.package);
   const services = useSelector((state: any) => state.booking.service || []);
 
-  // Extract start date properly
   let startDate: Date | null = null;
   if (bookingDate?.start) {
     startDate = new Date(bookingDate.start);
@@ -25,10 +35,12 @@ export default function StepSix() {
 
   const venuePrice = venue?.venue_price || 0;
   const packagePrice = pkg?.package_price || 0;
-  const servicesTotal = services.reduce((acc: number, s: any) => acc + (s.serv_price || 0), 0);
+  const servicesTotal = services.reduce(
+    (acc: number, s: any) => acc + (s.serv_price || 0),
+    0
+  );
   const total = venuePrice + packagePrice + servicesTotal;
 
-  // Handle continue (go to next step)
   const handleContinue = () => {
     dispatch(setTotalPrice(total));
     dispatch(nextStep());
@@ -50,61 +62,105 @@ export default function StepSix() {
         </p>
 
         <div className="flex flex-row gap-4 mt-4">
-          <div className="border border-gray-200 p-4 w-92">
-            <h2 className="font-semibold text-lg mb-2">Event Details</h2>
-            <p><strong>Venue:</strong> {venue?.venue_name}</p>
-<p>
-  <strong>Date:</strong>{" "}
-  {startDate
-    ? formatted(startDate) +
-      (bookingDate?.end ? ` - ${formatted(new Date(bookingDate.end))}` : "")
-    : "No date selected"}
-</p>
-<p>
-  <strong>Time:</strong> {bookingDate?.time ?? "No time selected"}
-</p>
+          <div className="border border-gray-200 p-4 w-96 rounded-md">
+            <h2 className="font-bold text-xl mb-4">Event Details</h2>
 
+            <p className="flex items-center gap-2 text-md font-semibold mb-2">
+              <HiLocationMarker className="text-xl text-gray-700" />
+              {venue?.venue_name}
+            </p>
 
-            <p><strong>Expected Guests:</strong> {event?.expected_guest}</p>
-            <p><strong>Event Type:</strong> {event?.event_type?.event_type}</p>
-            <p><strong>Event Name:</strong> {event?.event_name}</p>
+            <p className="flex items-center gap-2 mb-2">
+              <HiCalendar className="text-xl text-gray-700" />
+              {startDate
+                ? formatted(startDate) +
+                  (bookingDate?.end
+                    ? ` - ${formatted(new Date(bookingDate.end))}`
+                    : "")
+                : "No date selected"}
+            </p>
+
+            <p className="flex items-center gap-2 mb-2">
+              <HiClock className="text-xl text-gray-700" />
+              {bookingDate?.time ?? "No time selected"}
+            </p>
+
+            <p className="flex items-center gap-2 mb-2">
+              <HiUsers className="text-xl text-gray-700" />
+              {event?.expected_guest ?? "N/A"}
+            </p>
+
+            <p className="mb-2">
+              <strong>Event Type:</strong> {event?.event_type?.event_type}
+            </p>
+
+            <p>
+              <strong>Event Name:</strong> {event?.event_name}
+            </p>
           </div>
 
-          <div className="border border-gray-200 p-4 w-92">
-            <h2 className="font-semibold text-lg mb-2">Contact Information</h2>
-            <p>{contact?.first_name} {contact?.last_name}</p>
-            <p>{contact?.number}</p>
-            <p>{contact?.email}</p>
+          {/* Contact Information */}
+          <div className="border border-gray-200 p-4 w-96 rounded-md">
+            <h2 className="font-bold text-xl mb-4">Contact Information</h2>
+
+            <p className="flex items-center gap-2 mb-2">
+              <HiUsers className="text-xl text-gray-700" />
+              {contact?.first_name} {contact?.last_name}
+            </p>
+
+            <p className="flex items-center gap-2 mb-2">
+              <HiPhone className="text-xl text-gray-700" />
+              {contact?.number}
+            </p>
+
+            <p className="flex items-center gap-2">
+              <HiMail className="text-xl text-gray-700" />
+              {contact?.email}
+            </p>
           </div>
         </div>
+
         {(packagePrice > 0 || services.length > 0) && (
           <div className="w-full border border-gray-200 mt-6 p-4">
-            <h2 className="font-semibold text-lg mb-2">Package & Services</h2>
+            <h2 className="font-bold text-xl mb-2">Package & Services</h2>
 
-            {packagePrice > 0 && (
+            {pkg && (
               <>
-                <p><strong>Package:</strong> {pkg?.package_name}</p>
-                <p><strong>Package Price:</strong> ₱{packagePrice.toLocaleString()}</p>
+                <div className="flex flex-row justify-between">
+                  <p className="font-semibold w-full">
+                    {pkg?.package_name} Package
+                  </p>
+                  <p className="p-1 rounded-md bg-gray-200 w-22 text-center text-xs">
+                    {pkg?.package_name}
+                  </p>
+                </div>
+
+                <p className="text-sm text-gray-500">{pkg?.package_desc}</p>
               </>
             )}
 
-            <p><strong>Venue Price:</strong> ₱{venuePrice.toLocaleString()}</p>
+            <Separator className="my-4 border-b border-gray-200" />
+            <p className="flex justify-between">
+              <strong>Venue Rental</strong> ₱{venuePrice.toLocaleString()}
+            </p>
 
             {services.length > 0 && (
               <div className="mt-2">
                 <p className="font-semibold">Additional Services:</p>
-                <ul className="list-disc list-inside">
+                <ul className=" list-none list-inside">
                   {services.map((s: any, idx: number) => (
-                    <li key={idx}>
-                      {s.serv_name}: ₱{s.serv_price?.toLocaleString() || 0}
+                    <li key={idx} className="flex justify-between">
+                      {s.serv_name}: <span>₱{s.serv_price?.toLocaleString() || 0}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
 
-            <Separator className="my-4" />
-            <p className="text-lg font-bold">Total: ₱{total.toLocaleString()}</p>
+            <Separator className="my-4 border border-gray-200" />
+            <p className="text-lg font-bold flex justify-between">
+              Total:<span> ₱{total.toLocaleString()}</span>
+            </p>
           </div>
         )}
         <div className="flex justify-between px-10 pt-8">
@@ -114,10 +170,7 @@ export default function StepSix() {
           >
             Previous
           </Button>
-          <Button
-            className="bg-black text-white"
-            onClick={handleContinue}
-          >
+          <Button className="bg-black text-white" onClick={handleContinue}>
             Proceed to Payment
           </Button>
         </div>
