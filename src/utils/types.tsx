@@ -32,6 +32,7 @@ export type Service = {
   serv_id: number;
   serv_name: string;
   serv_price: number;
+  serv_type: string;
 };
 
 export type EventType = {

@@ -15,8 +15,8 @@ import {
 import DeleteModal from "../component/deleteModal";
 
 export default function Venue() {
-  const VENUE_API = "http://localhost:3000/venue";
-  const BOOKING_API = "http://localhost:3000/booking";
+  const VENUE_API = import.meta.env.VITE_VENUE_API;
+  const BOOKING_API = import.meta.env.VITE_BOOKING_API;
 
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");

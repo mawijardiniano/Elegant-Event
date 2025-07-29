@@ -20,11 +20,12 @@ export default function StepTwo() {
   const [time, setTime] = useState<string>("12:00");
   const [showError, setShowError] = useState(false);
   const [disabledDates, setDisabledDates] = useState<Date[]>([]);
+  const url = import.meta.env.VITE_BOOKING_API
 
   const fetchBookedDates = async () => {
     try {
       console.log("Fetching booked dates...");
-      const res = await axios.get("http://localhost:3000/booking");
+      const res = await axios.get(url);
       const dates: Date[] = [];
 
       res.data.forEach((booking: any) => {

@@ -6,7 +6,7 @@ import type { Booking } from "@/utils/types";
 
 export default function Booking() {
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const API = "http://localhost:3000/booking";
+  const API = import.meta.env.VITE_BOOKING_API;
 
   useEffect(() => {
     async function fetchBookings() {

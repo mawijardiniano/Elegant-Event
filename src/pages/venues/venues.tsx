@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { HiUsers, HiLocationMarker } from "react-icons/hi";
 
 export default function Venues() {
-  const API = "http://localhost:3000/venue";
+  const API = process.env.VITE_VENUE_API;
   const [venueList, setVenueList] = useState<VenueList[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8; 
+  const itemsPerPage = 8;
 
   const fetchVenue = async () => {
     try {
@@ -39,30 +39,30 @@ export default function Venues() {
       <div>
         <section className="w-full pt-12 pb-6 px-4 bg-gray-50">
           <div className="max-w-4xl mx-auto text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Venues</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Our Venues
+            </h1>
             <p className="text-lg text-gray-600">
               Discover the perfect venue for your special event. From intimate
               gatherings to grand celebrations, we have the ideal space to make
               your occasion unforgettable.
             </p>
-            <p className="text-sm text-gray-500 mt-2">
-              Showing {(currentPage - 1) * itemsPerPage + paginatedVenues.length} of{" "}
-              {venueList.length} venues
-            </p>
+            
           </div>
         </section>
 
-        <div className="flex flex-row flex-wrap justify-center gap-4 py-8">
+        <div className="grid grid-cols-4 justify-start gap-4 px-20 py-8">
           {paginatedVenues.map((venue) => (
             <div
               key={venue.venue_id}
-              className="border border-gray-200 w-full max-w-xs min-h-[450px] rounded-lg flex flex-col overflow-hidden shadow-sm"
+              className="border border-gray-200 w-full min-h-[450px] rounded-lg flex flex-col overflow-hidden shadow-sm"
             >
               <div className="relative">
                 <img
                   src={venue.venue_img}
                   alt={venue.venue_name}
                   className="w-full h-52 object-cover"
+                  loading="lazy"
                 />
                 <div className="absolute top-2 left-2">
                   <h1 className="bg-white py-1 px-3 rounded-full text-xs shadow">
@@ -123,7 +123,12 @@ export default function Venues() {
         </div>
 
         <div className="flex justify-end gap-6 pb-16 px-20">
-          <Button 
+          <p className="text-sm text-gray-500 mt-2">
+              Showing{" "}
+              {(currentPage - 1) * itemsPerPage + paginatedVenues.length} of{" "}
+              {venueList.length} venues
+            </p>
+          <Button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             className="bg-gray-200 text-black"
@@ -137,7 +142,9 @@ export default function Venues() {
 
           <Button
             disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             className="bg-gray-200 text-black"
           >
             Next

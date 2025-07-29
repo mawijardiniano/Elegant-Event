@@ -29,11 +29,15 @@ export default function StepSeven() {
 
   const venuePrice = venue?.venue_price || 0;
   const packagePrice = pkg?.package_price || 0;
-  const servicesTotal = (service || []).reduce(
-    (acc: number, s) => acc + (s.serv_price || 0),
-    0
-  );
-  const total = venuePrice + packagePrice + servicesTotal;
+const expectedGuests = guestInfo?.expected_guest || 1;
+
+const servicesTotal = (service || []).reduce((acc: number, s) => {
+  const perPersonPrice = s.serv_type === "per_person" ? expectedGuests : 1;
+  return acc + (s.serv_price || 0) * perPersonPrice;
+}, 0);
+
+const total = venuePrice + packagePrice + servicesTotal;
+
 
   const [name, setName] = useState("");
   const [cardError, setCardError] = useState<string | null>(null);
@@ -63,7 +67,7 @@ export default function StepSeven() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/payment/create-payment", {
+      const res = await fetch(import.meta.env.VITE_PAYMENT_API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -111,7 +115,7 @@ export default function StepSeven() {
         };
 
         const bookingRes = await fetch(
-          "http://localhost:3000/booking/add-booking",
+          import.meta.env.VITE_ADD_BOOKING_API,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -204,21 +208,33 @@ export default function StepSeven() {
                   </div>
                 )}
 
-                {service && service.length > 0 && (
-                  <div className="mt-2">
-                    <ul className="list-disc list-inside">
-                      {service.map((s, idx) => (
-                        <li
-                          className="list-none flex flex-row justify-between"
-                          key={idx}
-                        >
-                          {s.serv_name}:{" "}
-                          <span>₱{(s.serv_price ?? 0).toLocaleString()}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+               {service && service.length > 0 && (
+  <div className="mt-2">
+    <ul className="list-none list-inside">
+      {service.map((s, idx) => {
+        const isPerPerson = s.serv_type === "per_person";
+        const price = isPerPerson
+          ? (s.serv_price || 0) * expectedGuests
+          : s.serv_price || 0;
+
+        return (
+          <li key={idx} className="flex justify-between text-sm">
+            {s.serv_name}
+            <span>
+              ₱{price.toLocaleString()}
+              {isPerPerson && (
+                <span className="text-xs text-gray-500 ml-1">
+                  ({expectedGuests} guests)
+                </span>
+              )}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+)}
+
 
                 <Separator className="my-4 border border-gray-200" />
                 <p className="text-lg font-bold flex flex-row justify-between">

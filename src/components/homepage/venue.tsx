@@ -5,7 +5,7 @@ import type { VenueList } from "@/utils/types";
 import { HiUsers, HiLocationMarker } from "react-icons/hi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 export default function Venue() {
-  const API = "http://localhost:3000/venue";
+  const API = import.meta.env.VITE_VENUE_API;
   const [venueList, setVenueList] = useState<VenueList[]>([]);
 
   const fetchVenue = async () => {

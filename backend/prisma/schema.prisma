@@ -113,6 +113,7 @@ model Service {
   serv_id     Int     @id @default(autoincrement())
   serv_name   String
   serv_price  Float
+  serv_type   String @default("")
 
   bookings BookingService[]
 }

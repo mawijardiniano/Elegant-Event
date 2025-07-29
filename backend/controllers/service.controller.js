@@ -11,30 +11,31 @@ exports.getServices = async (req, res) => {
 
 exports.createService = async (req, res) => {
   try {
-    const { serv_name, serv_price } = req.body;
+    const { serv_name, serv_price, serv_type } = req.body;
 
-    const service = await services.createService({ serv_name, serv_price });
+    const service = await services.createService({ serv_name, serv_price, serv_type });
     res.status(201).json(service);
   } catch (error) {
     console.error("Error adding service", error);
   }
 };
-
 exports.editService = async (req, res) => {
   try {
     const { id } = req.params;
-    const { serv_name, serv_price } = req.body;
+    const { serv_name, serv_price, serv_type } = req.body;
 
-    if (!serv_name || serv_price == null) {
-      return res
-        .status(400)
-        .json({ message: "Service name and price are required." });
+    const updateData = {};
+
+    if (serv_name !== undefined) updateData.serv_name = serv_name;
+    if (serv_price !== undefined) updateData.serv_price = parseFloat(serv_price);
+    if (serv_type !== undefined) updateData.serv_type = serv_type;
+
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ message: "No valid fields provided to update." });
     }
 
-    const updatedService = await services.editService(parseInt(id), {
-      serv_name,
-      serv_price: parseFloat(serv_price),
-    });
+    const updatedService = await services.editService(parseInt(id), updateData);
 
     res.status(200).json({
       message: "Service updated successfully",
@@ -45,6 +46,7 @@ exports.editService = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 exports.deleteService = async (req, res) => {
   try {

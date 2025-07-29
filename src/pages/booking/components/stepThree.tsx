@@ -34,7 +34,8 @@ const guestInfoSchema = z.object({
 
 export default function StepThree() {
   const dispatch = useDispatch();
-  const GET_EVENTS = "http://localhost:3000/events";
+const GET_EVENTS = import.meta.env.VITE_EVENT_API;
+
 
   const [events, setEvents] = useState<EventType[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);

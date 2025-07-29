@@ -87,10 +87,10 @@ export default function StepOne() {
             >
               <div className="relative">
                 <img
-                  src={GrandHall}
-                  alt="Grand Hall"
+                  src={venue.venue_img}
+                  alt={venue.venue_name}
                   className="w-[250px] h-52 object-cover"
-                  loading="eager"
+                  loading="lazy"
                 />
                 <div className="absolute top-2 left-2">
                   <h1 className="bg-white py-1 px-3 rounded-full text-xs shadow">

@@ -5,7 +5,7 @@ import { formatted } from "@/lib/dateFormat";
 
 export default function RecentBooking() {
   const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
-  const API = "http://localhost:3000/booking";
+  const API = import.meta.env.VITE_BOOKING_API;
 
   const fetchBookings = async () => {
     try {

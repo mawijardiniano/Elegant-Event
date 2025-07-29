@@ -53,7 +53,7 @@ export default function Navbar() {
           <li><button onClick={() => handleNavClick("contact")}>Contacts</button></li>
         </ul>
         <div className="flex flex-row gap-4 items-center">
-          <h1>093282345</h1>
+          <h1>(555) 123-4567</h1>
           <Link to="/booking">
             <Button className="bg-black text-white">Book now</Button>
           </Link>

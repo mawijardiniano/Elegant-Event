@@ -6,7 +6,7 @@ import { FiCheck } from "react-icons/fi";
 export default function EventPackage() {
   const [packageList, setPackages] = useState<Packages[]>([]);
 
-  const API = "http://localhost:3000/package";
+  const API = import.meta.env.VITE_PACKAGE_API;
 
   const fetchPackage = async () => {
     try {

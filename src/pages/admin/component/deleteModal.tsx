@@ -13,7 +13,8 @@ export default function DeleteModal({ venueId, onClose, onDeleted }: DeleteModal
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const VENUE_API = (id: string) => `http://localhost:3000/venue/delete-venue/${id}`;
+ const VENUE_API = (id: string) => `${import.meta.env.VITE_VENUE_DELETE_API}/${id}`;
+
 
   const deleteVenue = async () => {
     setLoading(true);

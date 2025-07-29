@@ -17,7 +17,7 @@ export default function Contact() {
     {
       icon: <FaEnvelope className="text-xl text-blue-500" />,
       title: "Email",
-      detail: "info@elegantevents.com",
+      detail: "events@elegantevents.com",
     },
     {
       icon: <FaClock className="text-xl text-blue-500" />,

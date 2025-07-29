@@ -12,7 +12,7 @@ export default function Dashboard() {
   const [range, setRange] = useState<any>(undefined);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [showError, setShowError] = useState(false);
-  const API = "http://localhost:3000/booking";
+  const API = import.meta.env.VITE_BOOKING_API;
 
   const fetchBooking = async () => {
     try {

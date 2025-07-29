@@ -10,7 +10,7 @@ export default function Hero() {
         src={HeroBg}
         alt="Hero Background"
         className="absolute top-0 left-0 w-full h-full object-cover brightness-50"
-        loading="eager"
+        loading="lazy"
       />
 
       <div className="relative z-20 flex flex-col h-full items-center justify-center text-center px-4">

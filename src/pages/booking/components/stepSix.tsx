@@ -33,12 +33,18 @@ export default function StepSix() {
     startDate = new Date(bookingDate.start);
   }
 
+  const expectedGuests = event?.expected_guest || 1;
   const venuePrice = venue?.venue_price || 0;
   const packagePrice = pkg?.package_price || 0;
-  const servicesTotal = services.reduce(
-    (acc: number, s: any) => acc + (s.serv_price || 0),
-    0
-  );
+
+  const servicesTotal = services.reduce((acc: number, s: any) => {
+    if (s.serv_type === "per_person") {
+      return acc + (s.serv_price || 0) * expectedGuests;
+    } else {
+      return acc + (s.serv_price || 0);
+    }
+  }, 0);
+
   const total = venuePrice + packagePrice + servicesTotal;
 
   const handleContinue = () => {
@@ -62,6 +68,7 @@ export default function StepSix() {
         </p>
 
         <div className="flex flex-row gap-4 mt-4">
+          {/* Event Info */}
           <div className="border border-gray-200 p-4 w-96 rounded-md">
             <h2 className="font-bold text-xl mb-4">Event Details</h2>
 
@@ -87,19 +94,18 @@ export default function StepSix() {
 
             <p className="flex items-center gap-2 mb-2">
               <HiUsers className="text-xl text-gray-700" />
-              {event?.expected_guest ?? "N/A"}
+              {expectedGuests}
             </p>
 
             <p className="mb-2">
               <strong>Event Type:</strong> {event?.event_type?.event_type}
             </p>
-
             <p>
               <strong>Event Name:</strong> {event?.event_name}
             </p>
           </div>
 
-          {/* Contact Information */}
+
           <div className="border border-gray-200 p-4 w-96 rounded-md">
             <h2 className="font-bold text-xl mb-4">Contact Information</h2>
 
@@ -134,12 +140,12 @@ export default function StepSix() {
                     {pkg?.package_name}
                   </p>
                 </div>
-
                 <p className="text-sm text-gray-500">{pkg?.package_desc}</p>
               </>
             )}
 
             <Separator className="my-4 border-b border-gray-200" />
+
             <p className="flex justify-between">
               <strong>Venue Rental</strong> ₱{venuePrice.toLocaleString()}
             </p>
@@ -147,22 +153,39 @@ export default function StepSix() {
             {services.length > 0 && (
               <div className="mt-2">
                 <p className="font-semibold">Additional Services:</p>
-                <ul className=" list-none list-inside">
-                  {services.map((s: any, idx: number) => (
-                    <li key={idx} className="flex justify-between">
-                      {s.serv_name}: <span>₱{s.serv_price?.toLocaleString() || 0}</span>
-                    </li>
-                  ))}
+                <ul className="list-none list-inside">
+                  {services.map((s: any, idx: number) => {
+                    const isPerPerson = s.serv_type === "per_person";
+                    const price = isPerPerson
+                      ? s.serv_price * expectedGuests
+                      : s.serv_price;
+
+                    return (
+                      <li key={idx} className="flex justify-between text-sm">
+                        {s.serv_name}
+                        <span>
+                          ₱{price?.toLocaleString() || 0}
+                          {isPerPerson && (
+                            <span className="text-xs text-gray-500 ml-1">
+                              ({expectedGuests} guests)
+                            </span>
+                          )}
+                        </span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
 
             <Separator className="my-4 border border-gray-200" />
             <p className="text-lg font-bold flex justify-between">
-              Total:<span> ₱{total.toLocaleString()}</span>
+              Total: <span>₱{total.toLocaleString()}</span>
             </p>
           </div>
         )}
+
+        {/* Navigation */}
         <div className="flex justify-between px-10 pt-8">
           <Button
             className="bg-black text-white"

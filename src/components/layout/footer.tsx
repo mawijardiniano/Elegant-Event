@@ -52,7 +52,6 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Services */}
         <div>
           <h2 className="font-semibold text-lg text-black mb-3">Services</h2>
           <ul className="text-sm space-y-2 text-gray-600">
@@ -62,12 +61,12 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Contact Info */}
+
         <div>
           <h2 className="font-semibold text-lg text-black mb-3">Contact Info</h2>
           <ul className="text-sm space-y-2 text-gray-600">
             <li className="flex items-center gap-2">
-              <HiPhone /> 0932-823-45xx
+              <HiPhone /> (555) 123-4567
             </li>
             <li className="flex items-center gap-2">
               <HiMail /> events@elegantevents.com
@@ -79,7 +78,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Footer bottom */}
       <div className="mt-10 text-center text-sm text-gray-500">
         © {new Date().getFullYear()} Elegant Event. All rights reserved.
       </div>
