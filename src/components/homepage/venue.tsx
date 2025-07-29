@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import type { VenueList } from "@/utils/types";
 import { HiUsers, HiLocationMarker } from "react-icons/hi";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 export default function Venue() {
   const API = import.meta.env.VITE_VENUE_API;
   const [venueList, setVenueList] = useState<VenueList[]>([]);

@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Button } from "@/components/ui/button";
 import HeroBg from "@/assets/hero.jpg";
 import { Link } from "react-router-dom";

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import type { Packages } from "@/utils/types";
 import { FiCheck } from "react-icons/fi";
