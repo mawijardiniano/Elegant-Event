@@ -1,7 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const adminService = require("../services/admin.service");
-const { Trophy } = require("lucide-react");
 
 exports.getAdmin = async (req, res) => {
   try {
