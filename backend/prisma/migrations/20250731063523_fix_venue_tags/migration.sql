@@ -1,17 +1,17 @@
 /*
   Warnings:
 
-  - You are about to drop the column `serv_id` on the `booking` table. All the data in the column will be lost.
+  - You are about to drop the column `serv_id` on the `Booking` table. All the data in the column will be lost.
 
 */
 -- DropForeignKey
-ALTER TABLE `booking` DROP FOREIGN KEY `Booking_serv_id_fkey`;
+ALTER TABLE `Booking` DROP FOREIGN KEY `Booking_serv_id_fkey`;
 
 -- DropIndex
-DROP INDEX `Booking_serv_id_fkey` ON `booking`;
+DROP INDEX `Booking_serv_id_fkey` ON `Booking`;
 
 -- AlterTable
-ALTER TABLE `booking` DROP COLUMN `serv_id`;
+ALTER TABLE `Booking` DROP COLUMN `serv_id`;
 
 -- CreateTable
 CREATE TABLE `BookingService` (

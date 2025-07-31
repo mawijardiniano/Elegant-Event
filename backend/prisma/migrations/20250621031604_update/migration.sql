@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE `venue` DROP COLUMN `venue_img`;
+ALTER TABLE `Venue` DROP COLUMN `venue_img`;
