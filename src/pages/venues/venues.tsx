@@ -1,32 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Layout from "@/components/layout/layout";
 import axios from "axios";
 import type { VenueList } from "@/utils/types";
 import { Button } from "@/components/ui/button";
 import { HiUsers, HiLocationMarker } from "react-icons/hi";
+import { useVenues } from "@/hooks/useVenues";
 
 export default function Venues() {
-  const API = process.env.VITE_VENUE_API;
-  const [venueList, setVenueList] = useState<VenueList[]>([]);
+  const API = import.meta.env.VITE_VENUE_API;
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  const fetchVenue = async () => {
-    try {
-      const res = await axios.get(API);
-      const data = res.data.map((venue: any) => ({
-        ...venue,
-        tag: venue.tag ? [venue.tag] : [],
-      }));
-      setVenueList(data);
-    } catch (error) {
-      console.error("Error fetching venue", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchVenue();
-  }, []);
+  const { data: venueList = [], isLoading, isError } = useVenues();
 
   const totalPages = Math.ceil(venueList.length / itemsPerPage);
   const paginatedVenues = venueList.slice(
@@ -36,21 +21,20 @@ export default function Venues() {
 
   return (
     <Layout>
-      <div>
-        <section className="w-full pt-12 pb-6 px-4 bg-gray-50">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Our Venues
-            </h1>
-            <p className="text-lg text-gray-600">
-              Discover the perfect venue for your special event. From intimate
-              gatherings to grand celebrations, we have the ideal space to make
-              your occasion unforgettable.
-            </p>
-            
-          </div>
-        </section>
+      <section className="w-full pt-12 pb-6 px-4 bg-gray-50">
+        <div className="max-w-4xl mx-auto text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Venues</h1>
+          <p className="text-lg text-gray-600">
+            Discover the perfect venue for your special event. From intimate
+            gatherings to grand celebrations, we have the ideal space to make
+            your occasion unforgettable.
+          </p>
+        </div>
+      </section>
 
+      {isLoading ? (
+        <div className="text-center py-12">Loading venues...</div>
+      ) : (
         <div className="grid grid-cols-4 justify-start gap-4 px-20 py-8">
           {paginatedVenues.map((venue) => (
             <div
@@ -96,8 +80,8 @@ export default function Venues() {
                     </p>
 
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {venue.tag.length > 0 ? (
-                        venue.tag.map(
+                      {venue.tags?.length > 0 ? (
+                        venue.tags.map(
                           (tag: { tag_name: string }, idx: number) => (
                             <span
                               key={idx}
@@ -121,13 +105,14 @@ export default function Venues() {
             </div>
           ))}
         </div>
+      )}
 
+      {!isLoading && (
         <div className="flex justify-end gap-6 pb-16 px-20">
           <p className="text-sm text-gray-500 mt-2">
-              Showing{" "}
-              {(currentPage - 1) * itemsPerPage + paginatedVenues.length} of{" "}
-              {venueList.length} venues
-            </p>
+            Showing {(currentPage - 1) * itemsPerPage + paginatedVenues.length}{" "}
+            of {venueList.length} venues
+          </p>
           <Button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -150,7 +135,7 @@ export default function Venues() {
             Next
           </Button>
         </div>
-      </div>
+      )}
     </Layout>
   );
 }

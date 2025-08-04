@@ -4,26 +4,10 @@ import { Button } from "@/components/ui/button";
 import type { VenueList } from "@/utils/types";
 import { HiUsers, HiLocationMarker } from "react-icons/hi";
 import { Link } from "react-router-dom";
+import { useVenues } from "@/hooks/useVenues"; 
 export default function Venue() {
-  const API = import.meta.env.VITE_VENUE_API;
-  const [venueList, setVenueList] = useState<VenueList[]>([]);
-
-  const fetchVenue = async () => {
-    try {
-      const res = await axios.get(API);
-      const data = res.data.map((venue: any) => ({
-        ...venue,
-        tag: venue.tag ? [venue.tag] : [],
-      }));
-      setVenueList(data);
-    } catch (error) {
-      console.error("Error fetching venue", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchVenue();
-  }, []);
+ 
+ const { data: venueList = [], isLoading, isError } = useVenues(); 
 
   return (
     <section className="pt-20 bg-white">
@@ -77,20 +61,21 @@ export default function Venue() {
                       {venue.venue_loc}
                     </p>
 
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {venue.tag && venue.tag.length > 0 ? (
-                        venue.tag.map((tag: { tag_name: string }, idx: number) => (
-                          <span
-                            key={idx}
-                            className="bg-gray-200 text-xs px-2 py-1 rounded-full"
-                          >
-                            {tag.tag_name}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-gray-400 text-xs">No tags</span>
-                      )}
-                    </div>
+                   <div className="flex flex-wrap gap-2 mt-2">
+  {venue.tags && venue.tags.length > 0 ? (
+    venue.tags.map((tag: { tag_name: string }, idx: number) => (
+      <span
+        key={idx}
+        className="bg-gray-200 text-xs px-2 py-1 rounded-full"
+      >
+        {tag.tag_name}
+      </span>
+    ))
+  ) : (
+    <span className="text-gray-400 text-xs">No tags</span>
+  )}
+</div>
+
                   </div>
                 </div>
 
