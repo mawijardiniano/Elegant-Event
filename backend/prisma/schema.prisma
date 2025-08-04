@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,114 +8,111 @@ datasource db {
 }
 
 model Admin {
-  id    Int     @id @default(autoincrement())
-  name  String
-  email String  @unique
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique(map: "Admin_email_key")
   password String
+
+  @@map("Admin")
 }
 
 model EventType {
-  event_type_id    Int     @id @default(autoincrement())
-  event_type String
+  event_type_id Int       @id @default(autoincrement()) @map("event_type_id")
+  event_type    String    @map("event_type")
+  bookings      Booking[]
 
-	bookings Booking[]
+  @@map("EventType")
 }
 
 model Package {
-  package_id     Int      @id @default(autoincrement())
-  package_name   String
-  package_price  Float    @default(0)
-  package_desc   String   @default("")
-  features       String   @default("[]")
-  bookings       Booking[]
+  package_id    Int       @id @default(autoincrement()) @map("package_id")
+  package_name  String    @map("package_name")
+  features      String    @default("[]") @map("features")@db.Text
+  package_desc  String    @default("") @map("package_desc")
+  package_price Float     @default(0) @map("package_price")
+  bookings      Booking[]
+
+  @@map("Package")
 }
 
 model Tag {
-  tag_id   Int     @id @default(autoincrement())
-  tag_name String
-  venues   VenueTag[]
+  tag_id   Int     @id @default(autoincrement()) @map("tag_id")
+  tag_name String  @map("tag_name")
+  venue    Venue[]
+
+  @@map("Tag")
 }
 
 model Venue {
-  venue_id       Int         @id @default(autoincrement())
-  venue_name     String
-  venue_ratings  Float?
-  venue_desc     String
-  venue_capacity Int
-  venue_loc      String
-  venue_price    Float
-  venue_img      String?
-
+  venue_id       Int       @id @default(autoincrement()) @map("venue_id")
+  venue_name     String    @map("venue_name")
+  venue_ratings  Float?    @map("venue_ratings")
+  venue_desc     String    @map("venue_desc")
+  venue_capacity Int       @map("venue_capacity")
+  venue_loc      String    @map("venue_loc")
+  venue_price    Float     @map("venue_price")
+  tag_id         Int?
+  venue_img      String?   @map("venue_img")
   bookings       Booking[]
-  tags           VenueTag[] 
+  tag            Tag?      @relation(fields: [tag_id], references: [tag_id], map: "Venue_tag_id_fkey")
+
+  @@index([tag_id], map: "Venue_tag_id_fkey")
+  @@map("Venue")
 }
 
-model VenueTag {
-  venue_id Int
-  tag_id   Int
+model Booking {
+  booking_id     Int              @id @default(autoincrement()) @map("booking_id")
+  venue_id       Int              @map("venue_id")
+  booking_date   DateTime         @map("booking_date")
+  event_type_id  Int              @map("event_type_id")
+  expected_guest Int              @map("expected_guest")
+  event_name     String           @map("event_name")
+  description    String?          @map("description")
+  request        String?          @map("request")
+  package_id     Int              @map("package_id")
+  first_name     String           @map("first_name")
+  last_name      String           @map("last_name")
+  email          String           @map("email")
+  number         String           @map("number")
+  total_price    Float            @default(0) @map("total_price")
+  booking_end    DateTime?        @map("booking_end")
+  booking_time   String?          @map("booking_time")
+  status         BookingStatus    @default(PENDING) @map("status")
+  event_type     EventType        @relation(fields: [event_type_id], references: [event_type_id], onDelete: NoAction, map: "Booking_event_type_id_fkey")
+  package        Package          @relation(fields: [package_id], references: [package_id], onDelete: NoAction, map: "Booking_package_id_fkey")
+  venue          Venue            @relation(fields: [venue_id], references: [venue_id], onDelete: NoAction, map: "Booking_venue_id_fkey")
+  services       BookingService[]
 
-  venue Venue @relation(fields: [venue_id], references: [venue_id])
-  tag   Tag   @relation(fields: [tag_id], references: [tag_id])
-
-  @@id([venue_id, tag_id])
+  @@index([event_type_id], map: "Booking_event_type_id_fkey")
+  @@index([package_id], map: "Booking_package_id_fkey")
+  @@index([venue_id], map: "Booking_venue_id_fkey")
+  @@map("Booking")
 }
 
+model BookingService {
+  id         Int     @id @default(autoincrement()) @map("id")
+  booking_id Int     @map("booking_id")
+  serv_id    Int     @map("serv_id")
+  booking    Booking @relation(fields: [booking_id], references: [booking_id], onDelete: NoAction, map: "BookingService_booking_id_fkey")
+  service    Service @relation(fields: [serv_id], references: [serv_id], onDelete: NoAction, map: "BookingService_serv_id_fkey")
+
+  @@unique([booking_id, serv_id], map: "BookingService_booking_id_serv_id_key")
+  @@index([serv_id], map: "BookingService_serv_id_fkey")
+  @@map("Bookingservice")
+}
+
+model Service {
+  serv_id    Int              @id @default(autoincrement()) @map("serv_id")
+  serv_name  String           @map("serv_name")
+  serv_price Float            @map("serv_price")
+  serv_type  String           @default("") @map("serv_type")
+  bookings   BookingService[]
+
+  @@map("Service")
+}
 
 enum BookingStatus {
   PENDING
   ACTIVE
-  COMPLETED  
-}
-
-model Booking {
-  booking_id     Int        @id @default(autoincrement())
-
-  venue_id       Int
-  venue          Venue      @relation(fields: [venue_id], references: [venue_id])
-
-  booking_date   DateTime
-  booking_end    DateTime?
-  booking_time   String?
-
-  event_type_id  Int
-  event_type     EventType  @relation(fields: [event_type_id], references: [event_type_id])
-
-  expected_guest Int
-  event_name     String
-  description    String?
-  request        String?
-
-  package_id     Int
-  package        Package    @relation(fields: [package_id], references: [package_id])
-
-  services BookingService[]
-
-  first_name     String
-  last_name      String
-  email          String
-  number         String 
-
-  total_price    Float     @default(0)
-  status         BookingStatus @default(PENDING)
-}
-
-model BookingService {
-  id          Int      @id @default(autoincrement())
-
-  booking     Booking  @relation(fields: [booking_id], references: [booking_id])
-  booking_id  Int
-
-  service     Service  @relation(fields: [serv_id], references: [serv_id])
-  serv_id     Int
-
-  @@unique([booking_id, serv_id])
-}
-
-model Service {
-  serv_id     Int     @id @default(autoincrement())
-  serv_name   String
-  serv_price  Float
-  serv_type   String @default("")
-
-  bookings BookingService[]
+  COMPLETED
 }

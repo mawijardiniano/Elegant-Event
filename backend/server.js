@@ -20,6 +20,7 @@ app.use(cors({
   credentials: true,
 }));
 
+
 app.use('/admin', adminRoutes);
 app.use('/events', eventRoutes);
 app.use('/package', packageRouter)

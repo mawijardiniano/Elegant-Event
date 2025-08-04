@@ -1,25 +1,8 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import type { Packages } from "@/utils/types";
 import { FiCheck } from "react-icons/fi";
+import { usePackage } from "@/hooks/usePackage";
 
 export default function EventPackage() {
-  const [packageList, setPackages] = useState<Packages[]>([]);
-
-  const API = import.meta.env.VITE_PACKAGE_API;
-
-  const fetchPackage = async () => {
-    try {
-      const res = await axios.get(API);
-      setPackages(res.data.splice(0, 3));
-    } catch (error) {
-      console.error("Error fetching packages", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchPackage();
-  }, []);
+ const { data: packageList = [], isLoading, isError } = usePackage(); 
 
   return (
     <section className="max-w-6xl mx-auto pt-20 px-6">
@@ -43,9 +26,9 @@ export default function EventPackage() {
 
             <div className="mb-6 text-center">
               <span className="text-4xl font-bold text-gray-900">
-                $
+                ₱
                 {pkg.package_price === 0
-                  ? 1000
+                  ? 66000
                   : pkg.package_price.toLocaleString()}
               </span>
 
