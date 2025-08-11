@@ -14,8 +14,8 @@ import { FiCheck } from "react-icons/fi";
 
 export default function StepFour() {
   const dispatch = useDispatch();
-  const PACKAGE_API =import.meta.env.VITE_PACKAGE_API;
-  const SERVICE_API =import.meta.env.VITE_SERVICE_API;
+  const PACKAGE_API = import.meta.env.VITE_PACKAGE_API;
+  const SERVICE_API = import.meta.env.VITE_SERVICE_API;
 
   const [packages, setPackages] = useState<Packages[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -46,7 +46,7 @@ export default function StepFour() {
     };
 
     fetchAll();
-  }, []);
+  }, []);  // <-- Added empty dependency array here!
 
   const handleSelectPackage = (pkg: Packages) => {
     setSelectedPackage(pkg.package_id);
@@ -99,17 +99,11 @@ export default function StepFour() {
                   : "border-gray-200"
               } w-[250px] min-h-[350px] rounded-md p-4 hover:shadow-md transition`}
             >
+              <p className="text-center text-xl font-bold mb-1">{p.package_name}</p>
               <p className="text-center text-xl font-bold mb-1">
-                {p.package_name}
+                {p.package_price === 66000 ? "(Included)" : "₱" + p.package_price.toFixed(2)}
               </p>
-              <p className="text-center text-xl font-bold mb-1">
-                {p.package_price === 0
-                  ? "(Included)"
-                  : "₱" + p.package_price.toFixed(2)}
-              </p>
-              <p className="text-center text-gray-500 text-xs">
-                {p.package_desc}
-              </p>
+              <p className="text-center text-gray-500 text-xs">{p.package_desc}</p>
 
               <ul className="mt-2 space-y-1">
                 {p.features?.map((feature: string, i: number) => (
@@ -124,46 +118,37 @@ export default function StepFour() {
         </div>
 
         <div className="pt-8">
-          <h2 className="text-xl font-semibold mb-4">
-            Select Additional Services
-          </h2>
+          <h2 className="text-xl font-semibold mb-4">Select Additional Services</h2>
           <div className="grid grid-cols-2 gap-4">
-           {services.map((service) => (
-  <label
-    key={service.serv_id}
-    className="border border-gray-200 p-4 flex items-center gap-3 cursor-pointer rounded-md hover:border-black transition"
-  >
-    <input
-      type="checkbox"
-      checked={selectedServices.some(
-        (s) => s.serv_id === service.serv_id
-      )}
-      onChange={() => handleServiceToggle(service)}
-      className="accent-black"
-    />
-    <div>
-      <h3 className="font-medium">{service.serv_name}</h3>
-      <p className="text-sm text-gray-600">
-        ₱{service.serv_price.toFixed(2)}{" "}
-       {service.serv_type === "per_person"
-          ? "per person"
-          : service.serv_type === "per_event"
-          ? "per event"
-          : ""}
-      </p>
-    </div>
-  </label>
-))}
-
+            {services.map((service) => (
+              <label
+                key={service.serv_id}
+                className="border border-gray-200 p-4 flex items-center gap-3 cursor-pointer rounded-md hover:border-black transition"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedServices.some((s) => s.serv_id === service.serv_id)}
+                  onChange={() => handleServiceToggle(service)}
+                  className="accent-black"
+                />
+                <div>
+                  <h3 className="font-medium">{service.serv_name}</h3>
+                  <p className="text-sm text-gray-600">
+                    ₱{service.serv_price.toFixed(2)}{" "}
+                    {service.serv_type === "per_person"
+                      ? "per person"
+                      : service.serv_type === "per_event"
+                      ? "per event"
+                      : ""}
+                  </p>
+                </div>
+              </label>
+            ))}
           </div>
         </div>
 
-        {/* Navigation Buttons */}
         <div className="flex justify-between px-10 pt-8">
-          <Button
-            className="bg-black text-white"
-            onClick={() => dispatch(prevStep())}
-          >
+          <Button className="bg-black text-white" onClick={() => dispatch(prevStep())}>
             Previous
           </Button>
           <Button className="bg-black text-white" onClick={handleContinue}>

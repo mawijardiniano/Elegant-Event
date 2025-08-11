@@ -34,7 +34,6 @@ const guestInfoSchema = z.object({
 
 export default function StepThree() {
   const dispatch = useDispatch();
-const GET_EVENTS = import.meta.env.VITE_EVENT_API;
 
 
   const [events, setEvents] = useState<EventType[]>([]);
@@ -100,7 +99,7 @@ const GET_EVENTS = import.meta.env.VITE_EVENT_API;
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get(GET_EVENTS);
+      const res = await axios.get(import.meta.env.VITE_EVENT_API);
       setEvents(res.data);
     } catch (error) {
       console.error("Error fetching Events", error);
@@ -109,7 +108,7 @@ const GET_EVENTS = import.meta.env.VITE_EVENT_API;
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  });
 
   const markTouched = (field: string) => {
     setTouched((prev) => ({ ...prev, [field]: true }));

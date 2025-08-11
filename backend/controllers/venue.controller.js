@@ -23,13 +23,13 @@ exports.createVenue = async (req, res) => {
       tag_id = []
     } = req.body;
 
-    let imageUrl = null;
+    // let imageUrl = null;
 
-    if (req.file) {
-      const originalName = req.file.originalname;
-      const destFileName = `images/${Date.now()}-${originalName}`;
-      imageUrl = await uploadBuffer(req.file.buffer, destFileName);
-    }
+    // if (req.file) {
+    //   const originalName = req.file.originalname;
+    //   const destFileName = `images/${Date.now()}-${originalName}`;
+    //   imageUrl = await uploadBuffer(req.file.buffer, destFileName);
+    // }
 
     const venue = await venueService.createVenue({
       venue_name,
@@ -38,7 +38,7 @@ exports.createVenue = async (req, res) => {
       venue_capacity: parseInt(venue_capacity),
       venue_loc,
       venue_price: parseFloat(venue_price),
-      venue_img: imageUrl,
+      // venue_img: imageUrl,
       tag_id
     });
 

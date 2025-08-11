@@ -7,6 +7,11 @@ import { HiUsers, HiLocationMarker } from "react-icons/hi";
 import ProgressComponent from "./progress";
 import { useVenues } from "@/hooks/useVenues";
 
+// Import images
+import GrandHall from '@/assets/GrandHall.jpg';
+import Sunset from "@/assets/sunsetgarden.jpg";
+import Pavellion from "@/assets/grandpavellion.jpg";
+
 export default function StepOne() {
   const dispatch = useDispatch();
   const [selectedVenue, setSelectedVenue] = useState<number | null>(null);
@@ -14,6 +19,20 @@ export default function StepOne() {
   const itemsPerPage = 3;
 
   const { data: venueList = [], isLoading, isError } = useVenues();
+
+  // Image map
+  const venueImages: Record<string, string> = {
+    grandhallroyale: GrandHall,
+    sunsetgarden: Sunset,
+    thegrandpavilion: Pavellion,
+  };
+
+  // Normalize venue name and get image or fallback
+  const getVenueImage = (venueName: string) => {
+    const normalized = venueName.toLowerCase().replace(/\s+/g, "");
+    return venueImages[normalized] || Sunset; // fallback image
+  };
+
   const handleSelectVenue = (venue: VenueList) => {
     setSelectedVenue(venue.venue_id);
     dispatch(setVenue(venue));
@@ -73,7 +92,7 @@ export default function StepOne() {
                 >
                   <div className="relative">
                     <img
-                      src={venue.venue_img}
+                      src={getVenueImage(venue.venue_name)}
                       alt={venue.venue_name}
                       className="w-[250px] h-52 object-cover"
                       loading="lazy"

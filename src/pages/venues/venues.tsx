@@ -1,13 +1,27 @@
 import React, { useState } from "react";
 import Layout from "@/components/layout/layout";
-import axios from "axios";
-import type { VenueList } from "@/utils/types";
 import { Button } from "@/components/ui/button";
 import { HiUsers, HiLocationMarker } from "react-icons/hi";
 import { useVenues } from "@/hooks/useVenues";
 
+// Import images
+import GrandHall from '@/assets/GrandHall.jpg';
+import Sunset from "@/assets/sunsetgarden.jpg";
+import Pavellion from "@/assets/grandpavellion.jpg";
+
 export default function Venues() {
-  const API = import.meta.env.VITE_VENUE_API;
+  const venueImages: Record<string, string> = {
+    grandhallroyale: GrandHall,
+    sunsetgarden: Sunset,
+    thegrandpavilion: Pavellion,
+  };
+
+  // Helper to normalize name and get image
+  function getVenueImage(venueName: string): string {
+    const normalized = venueName.toLowerCase().replace(/\s+/g, '');
+    return venueImages[normalized] || Sunset; // fallback image
+  }
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
@@ -43,7 +57,7 @@ export default function Venues() {
             >
               <div className="relative">
                 <img
-                  src={venue.venue_img}
+                  src={getVenueImage(venue.venue_name)}
                   alt={venue.venue_name}
                   className="w-full h-52 object-cover"
                   loading="lazy"
