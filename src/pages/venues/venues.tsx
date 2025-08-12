@@ -4,7 +4,6 @@ import { HiUsers, HiLocationMarker } from "react-icons/hi";
 import { useVenues } from "@/hooks/useVenues";
 import { useState } from "react";
 
-// Import images
 import GrandHall from '@/assets/GrandHall.jpg';
 import Sunset from "@/assets/sunsetgarden.jpg";
 import Pavellion from "@/assets/grandpavellion.jpg";

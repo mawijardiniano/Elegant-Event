@@ -4,7 +4,7 @@ exports.getVenues = async () => {
   return await prisma.venue.findMany({
     include: {
       bookings: true,
-      tag: true
+      tag: true 
     }
   });
 };
@@ -31,9 +31,9 @@ exports.editVenue = async (id, data) => {
     where: { venue_id: id },
     data,
     include: {
-      tags: {            
-        include: { tag: true }
-      }
+      tag: true
+       
+      
     }
   })
 }

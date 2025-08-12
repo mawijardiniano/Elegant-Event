@@ -16,10 +16,20 @@ const uploadRoute = require('./routes/upload.routes')
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://elegant-event-1.onrender.com'
-  ]
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'https://elegant-event-1.onrender.com'
+    ];
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('CORS policy: Not allowed by CORS'), false);
+    }
+  },
+  credentials: true
 }));
 
 
