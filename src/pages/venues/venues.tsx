@@ -17,10 +17,9 @@ export default function Venues() {
     thegrandpavilion: Pavellion,
   };
 
-  // Helper to normalize name and get image
   function getVenueImage(venueName: string): string {
     const normalized = venueName.toLowerCase().replace(/\s+/g, '');
-    return venueImages[normalized] || Sunset; // fallback image
+    return venueImages[normalized] || Sunset; 
   }
 
   const [currentPage, setCurrentPage] = useState(1);
