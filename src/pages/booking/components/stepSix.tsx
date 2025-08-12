@@ -1,4 +1,4 @@
-import React from "react";
+
 import ProgressComponent from "./progress";
 import { useSelector, useDispatch } from "react-redux";
 import { formatted } from "@/lib/dateFormat";
@@ -17,27 +17,28 @@ import {
   HiPhone,
   HiMail,
 } from "react-icons/hi";
+import type { Booking, Service } from "@/utils/types";
 
 export default function StepSix() {
   const dispatch = useDispatch();
 
-  const venue = useSelector((state: any) => state.booking.venue);
-  const bookingDate = useSelector((state: any) => state.booking.booking_date);
-  const event = useSelector((state: any) => state.booking.guest_info);
-  const contact = useSelector((state: any) => state.booking.contact_info);
-  const pkg = useSelector((state: any) => state.booking.package);
-  const services = useSelector((state: any) => state.booking.service || []);
+  const venue = useSelector((state: Booking) => state.venue);
+  const bookingDate = useSelector((state: Booking) => state.bookingDate);
+  const event = useSelector((state: Booking) => state.guest_info);
+  const contact = useSelector((state: Booking) => state.contact_info);
+  const pkg = useSelector((state: Booking) => state.package);
+  const services = useSelector((state: Booking) => state.service || []);
 
   let startDate: Date | null = null;
-  if (bookingDate?.start) {
-    startDate = new Date(bookingDate.start);
+  if (bookingDate?.booking_date) {
+    startDate = new Date(bookingDate.booking_date);
   }
 
   const expectedGuests = event?.expected_guest || 1;
   const venuePrice = venue?.venue_price || 0;
   const packagePrice = pkg?.package_price || 0;
 
-  const servicesTotal = services.reduce((acc: number, s: any) => {
+  const servicesTotal = services.reduce((acc: number, s: Service) => {
     if (s.serv_type === "per_person") {
       return acc + (s.serv_price || 0) * expectedGuests;
     } else {
@@ -81,15 +82,15 @@ export default function StepSix() {
               <HiCalendar className="text-xl text-gray-700" />
               {startDate
                 ? formatted(startDate) +
-                  (bookingDate?.end
-                    ? ` - ${formatted(new Date(bookingDate.end))}`
+                  (bookingDate?.booking_end
+                    ? ` - ${formatted(new Date(bookingDate.booking_end))}`
                     : "")
                 : "No date selected"}
             </p>
 
             <p className="flex items-center gap-2 mb-2">
               <HiClock className="text-xl text-gray-700" />
-              {bookingDate?.time ?? "No time selected"}
+              {bookingDate?.booking_time ?? "No time selected"}
             </p>
 
             <p className="flex items-center gap-2 mb-2">
@@ -154,7 +155,7 @@ export default function StepSix() {
               <div className="mt-2">
                 <p className="font-semibold">Additional Services:</p>
                 <ul className="list-none list-inside">
-                  {services.map((s: any, idx: number) => {
+                  {services.map((s: Service, idx: number) => {
                     const isPerPerson = s.serv_type === "per_person";
                     const price = isPerPerson
                       ? s.serv_price * expectedGuests

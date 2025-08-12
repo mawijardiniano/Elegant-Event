@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Calendar } from "@/components/ui/calendar";
 import { eachDayOfInterval, parseISO } from "date-fns";
 import ChartBarActive from "@/pages/admin/component/barChart";
 import UpcomingEvent from "../component/upcomingEvent";
 import RecentBooking from "../component/recentBooking";
+import type { Booking, BookingState } from "@/utils/types";
+import type { DateRange } from "react-day-picker";
 
 export default function Dashboard() {
-  const [booking, setBooking] = useState([]);
-  const [disabledDates, setDisabledDates] = useState<Date[]>([]);
-  const [range, setRange] = useState<any>(undefined);
+const [booking, setBooking] = useState<Booking[]>([]);
+const [disabledDates, setDisabledDates] = useState<Date[]>([]);
+
+const [range, setRange] = useState<DateRange | undefined>(undefined);
   const [totalRevenue, setTotalRevenue] = useState(0);
-  const [showError, setShowError] = useState(false);
+const [, setShowError] = useState(false);
   const API = import.meta.env.VITE_BOOKING_API;
 
   const fetchBooking = async () => {
@@ -19,7 +22,7 @@ export default function Dashboard() {
       const res = await axios.get(API);
       const bookings = res.data;
 
-      const revenue = bookings.reduce((acc: number, curr: any) => {
+      const revenue = bookings.reduce((acc: number, curr:   BookingState) => {
         return acc + (curr.total_price || 0);
       }, 0);
 
@@ -27,9 +30,14 @@ export default function Dashboard() {
       setTotalRevenue(revenue);
 
       const dates: Date[] = [];
-      bookings.forEach((booking: any) => {
-        const start = parseISO(booking.booking_date);
-        const end = booking.booking_end ? parseISO(booking.booking_end) : start;
+      bookings.forEach((booking: Booking) => {
+        if (!booking.bookingDate?.booking_date) {
+          return;
+        }
+        const start = parseISO(booking.bookingDate.booking_date);
+        const end = booking.bookingDate?.booking_end
+          ? parseISO(booking.bookingDate.booking_end)
+          : start;
         const days = eachDayOfInterval({ start, end });
         dates.push(...days);
       });
@@ -42,7 +50,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchBooking();
-  }, []);
+  });
 
   return (
     <div className="p-8">

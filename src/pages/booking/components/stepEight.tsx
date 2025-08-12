@@ -1,4 +1,4 @@
-import React from "react";
+
 import ProgressComponent from "@/pages/booking/components/progress";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../store";
@@ -22,7 +22,7 @@ export default function StepEight() {
 
   const totalPrice = useSelector((state: RootState) => state.booking.total_price);
   const venue = useSelector((state: RootState) => state.booking.venue);
-  const bookingDate = useSelector((state: RootState) => state.booking.booking_date);
+  const bookingDate = useSelector((state: RootState) => state.booking.bookingDate);
   const totalGuest = useSelector((state: RootState) => state.booking.guest_info?.expected_guest);
 
   const handleGoHome = () => {
@@ -30,9 +30,9 @@ export default function StepEight() {
     navigate("/");
   };
 
-  const startDate = bookingDate?.start ? new Date(bookingDate.start) : null;
-  const endDate = bookingDate?.end ? new Date(bookingDate.end) : null;
-  const time = bookingDate?.time || "";
+  const startDate = bookingDate?.booking_date ? new Date(bookingDate.booking_date) : null;
+  const endDate = bookingDate?.booking_end ? new Date(bookingDate.booking_end) : null;
+  const time = bookingDate?.booking_time || "";
 
   return (
     <div className="flex flex-col items-center py-12 px-4">

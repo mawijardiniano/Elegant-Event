@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ProgressComponent from "./progress";
 import axios from "axios";
 import type { Packages, Service } from "@/utils/types";
@@ -105,14 +105,15 @@ export default function StepFour() {
               </p>
               <p className="text-center text-gray-500 text-xs">{p.package_desc}</p>
 
-              <ul className="mt-2 space-y-1">
-                {p.features?.map((feature: string, i: number) => (
-                  <li key={i} className="flex items-center text-sm gap-2">
-                    <FiCheck className="text-blue-500" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+             <ul className="mt-2 space-y-1">
+  {Array.isArray(p.features) &&
+    p.features.map((feature: string, i: number) => (
+      <li key={i} className="flex items-center text-sm gap-2">
+        <FiCheck className="text-blue-500" />
+        {feature}
+      </li>
+    ))}
+</ul>
             </div>
           ))}
         </div>

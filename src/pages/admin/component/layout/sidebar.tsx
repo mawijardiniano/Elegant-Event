@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 export default function Sidebar() {
   const location = useLocation();
 
-  const linkClass = (path) =>
+  const linkClass = (path: string) =>
     `flex items-center px-5 py-3 text-lg font-medium rounded-lg transition-all duration-200 ${
       location.pathname === path
         ? "bg-blue-100 text-blue-800 border-l-4 border-blue-500 pl-6 font-semibold shadow-sm"

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setVenue, nextStep } from "@/pages/booking/redux/bookingSlice";
 import { Button } from "@/components/ui/button";
@@ -80,7 +80,7 @@ export default function StepOne() {
             </p>
 
             <div className="flex flex-row justify-start gap-1 mt-4">
-              {paginatedVenues.map((venue) => (
+              {paginatedVenues.map((venue: VenueList) => (
                 <div
                   key={venue.venue_id}
                   onClick={() => handleSelectVenue(venue)}

@@ -1,9 +1,18 @@
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
+import type { LegendPayload } from "recharts";
+
+// Define TooltipPayload type based on Recharts' tooltip payload structure
+type TooltipPayload = {
+  name?: string;
+  value?: string | number | undefined;
+  dataKey?: string | number;
+  color?: string;
+  payload?: unknown;
+};
 
 import { cn } from "@/lib/utils"
 
-// Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const
 
 export type ChartConfig = {
@@ -116,13 +125,15 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
-}: React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
+}: Omit<React.ComponentProps<typeof RechartsPrimitive.Tooltip>, "payload"> &
   React.ComponentProps<"div"> & {
+    payload?: TooltipPayload[]; 
     hideLabel?: boolean
     hideIndicator?: boolean
     indicator?: "line" | "dot" | "dashed"
     nameKey?: string
     labelKey?: string
+    label?: string
   }) {
   const { config } = useChart()
 
@@ -177,21 +188,34 @@ function ChartTooltipContent({
     >
       {!nestLabel ? tooltipLabel : null}
       <div className="grid gap-1.5">
-        {payload.map((item, index) => {
-          const key = `${nameKey || item.name || item.dataKey || "value"}`
+        {((payload as LegendPayload[]) ?? []).map((item, index) => {
+          const key = `${nameKey || item.value || item.dataKey || "value"}`
           const itemConfig = getPayloadConfigFromPayload(config, item, key)
-          const indicatorColor = color || item.payload.fill || item.color
+          const indicatorColor =
+            color ||
+            (item.payload && typeof item.payload === "object" && "fill" in item.payload
+              ? (item.payload as { fill?: string }).fill
+              : undefined) ||
+            item.color
 
           return (
             <div
-              key={item.dataKey}
+              key={typeof item.dataKey === "string" || typeof item.dataKey === "number" ? item.dataKey : item.value ?? index}
               className={cn(
                 "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
                 indicator === "dot" && "items-center"
               )}
             >
-              {formatter && item?.value !== undefined && item.name ? (
-                formatter(item.value, item.name, item, index, item.payload)
+              {formatter && item?.value !== undefined && item.dataKey ? (
+                formatter(
+                  item.value,
+                  typeof item.dataKey === "function"
+                    ? String(item.dataKey.name || "dataKey")
+                    : item.dataKey,
+                  item as TooltipPayload,
+                  index,
+                  Array.isArray(item.payload) ? item.payload : []
+                )
               ) : (
                 <>
                   {itemConfig?.icon ? (
@@ -227,7 +251,7 @@ function ChartTooltipContent({
                     <div className="grid gap-1.5">
                       {nestLabel ? tooltipLabel : null}
                       <span className="text-muted-foreground">
-                        {itemConfig?.label || item.name}
+                        {itemConfig?.label || item.value}
                       </span>
                     </div>
                     {item.value && (
@@ -255,7 +279,9 @@ function ChartLegendContent({
   verticalAlign = "bottom",
   nameKey,
 }: React.ComponentProps<"div"> &
-  Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+  {
+    payload?: LegendPayload[];
+    verticalAlign?: "top" | "bottom" | "middle";
     hideIcon?: boolean
     nameKey?: string
   }) {
@@ -273,7 +299,7 @@ function ChartLegendContent({
         className
       )}
     >
-      {payload.map((item) => {
+      {(payload as LegendPayload[]).map((item: LegendPayload) => {
         const key = `${nameKey || item.dataKey || "value"}`
         const itemConfig = getPayloadConfigFromPayload(config, item, key)
 
@@ -302,7 +328,6 @@ function ChartLegendContent({
   )
 }
 
-// Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(
   config: ChartConfig,
   payload: unknown,

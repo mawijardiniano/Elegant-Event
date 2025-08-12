@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import type { StripeCardElement } from "@stripe/stripe-js";
 import ProgressComponent from "@/pages/booking/components/progress";
@@ -21,7 +21,7 @@ export default function StepSeven() {
     (state: RootState) => state.booking.contact_info
   );
   const booking_date = useSelector(
-    (state: RootState) => state.booking.booking_date
+    (state: RootState) => state.booking.bookingDate
   );
   const totalPrice = useSelector(
     (state: RootState) => state.booking.total_price

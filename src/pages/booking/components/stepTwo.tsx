@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   setBookingDate,
@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import type { DateRange } from "react-day-picker";
 import axios from "axios";
-import { addDays, eachDayOfInterval, parseISO } from "date-fns";
+import { eachDayOfInterval, parseISO } from "date-fns";
+import type { Booking } from "@/utils/types";
 
 export default function StepTwo() {
   const dispatch = useDispatch();
@@ -28,13 +29,20 @@ export default function StepTwo() {
       const res = await axios.get(url);
       const dates: Date[] = [];
 
-      res.data.forEach((booking: any) => {
-        const start = parseISO(booking.booking_date);
-        const end = booking.booking_end ? parseISO(booking.booking_end) : start;
+res.data.forEach((booking: Booking) => {
+  if (!booking.bookingDate?.booking_date) {
+    return;
+  }
 
-        const range = eachDayOfInterval({ start, end });
-        dates.push(...range);
-      });
+  const start = parseISO(booking.bookingDate.booking_date);
+  const end = booking.bookingDate?.booking_end
+    ? parseISO(booking.bookingDate.booking_end)
+    : start;
+
+  const range = eachDayOfInterval({ start, end });
+  dates.push(...range);
+});
+
 
       console.log("Booked dates fetched:", dates);
       setDisabledDates(dates);
@@ -72,7 +80,7 @@ export default function StepTwo() {
     console.log("Booking End:", bookingEnd);
     console.log("Selected Time:", time);
 
-    dispatch(setBookingDate({ start: bookingStart!, end: bookingEnd, time }));
+    dispatch(setBookingDate({ booking_date: bookingStart!, booking_end: bookingEnd, booking_time: time }));
 
     dispatch(nextStep());
   };

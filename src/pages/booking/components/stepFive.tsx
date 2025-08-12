@@ -18,7 +18,6 @@ const phoneNumber = z
   .max(15, "Number is too long")
   .regex(/^[0-9]+$/, "Phone number must contain only digits");
 
-const name = z.string();
 
 export default function StepFive() {
   const dispatch = useDispatch();

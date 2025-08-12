@@ -24,7 +24,7 @@ export default function UpcomingEvent() {
 
   useEffect(() => {
     fetchBookings();
-  }, []);
+  });
 
   return (
     <div className="border border-gray-200 p-4 rounded">
@@ -41,17 +41,21 @@ export default function UpcomingEvent() {
               <p>
                 <strong>Venue:</strong> {booking.venue?.venue_name || "No venue"}
               </p>
-              <p>
-                <strong>Date:</strong>{" "}
-                {booking.booking_date === booking.booking_end
-                  ? formatted(booking.booking_date)
-                  : `${formatted(booking.booking_date)} - ${formatted(
-                      booking.booking_end
-                    )}`}
-              </p>
-              <p>{booking.booking_time}</p>
+<p>
+  <strong>Date:</strong>{" "}
+  {booking.bookingDate?.booking_date
+    ? booking.bookingDate.booking_date === booking.bookingDate.booking_end
+      ? formatted(new Date(booking.bookingDate.booking_date))
+      : `${formatted(new Date(booking.bookingDate.booking_date))} - ${formatted(
+          new Date(booking.bookingDate.booking_end || booking.bookingDate.booking_date)
+        )}`
+    : "No date set"}
+</p>
+
+
+              <p>{booking.bookingDate?.booking_time}</p>
               <p>{booking.venue.venue_name}</p>
-              <p>{booking.expected_guest}</p>
+              <p>{booking.guest_info.expected_guest}</p>
               <p>
                 <strong>Status:</strong> {booking.status}
               </p>

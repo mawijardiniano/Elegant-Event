@@ -8,14 +8,18 @@ import type {
   Service,
   GuestInfo,
   UserContact,
-  BookingDateTime
+  BookingDate
 } from "@/utils/types";
 
 const initialState: BookingState = {
   booking_id: 0,
   currentStep: 1,
   venue: null,
-  booking_date: null,
+  bookingDate: {
+    booking_date: null,
+    booking_end: null,
+    booking_time: null,
+  },
   event_type: null,
   package: null,
   service: null,
@@ -43,8 +47,8 @@ const bookingSlice = createSlice({
     setContactInfo: (state, action: PayloadAction<UserContact>) => {
       state.contact_info = action.payload;
     },
-    setBookingDate: (state, action: PayloadAction<BookingDateTime>) => {
-      state.booking_date = action.payload;
+    setBookingDate: (state, action: PayloadAction<BookingDate>) => {
+      state.bookingDate = action.payload;
     },
     setTotalPrice: (state, action: PayloadAction<number>) => {
       state.total_price = action.payload;

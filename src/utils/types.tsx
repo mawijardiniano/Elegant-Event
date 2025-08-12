@@ -25,7 +25,7 @@ export type Packages = {
   package_name: string;
   package_desc: string;
   package_price: number;
-  features: string[];
+  features: string | string[];
 };
 
 export type Service = {
@@ -59,9 +59,7 @@ export type Booking = {
   booking_id: number;
   currentStep: number;
   venue: VenueList;
-  booking_date: string | null;
-  booking_end: string | null;
-  booking_time: string | null;
+  bookingDate: BookingDate | null;
   event_type: EventType;
   package: Packages;
   service: Service[] | null;
@@ -74,15 +72,21 @@ export type BookingState = {
   booking_id: number;
   currentStep: number;
   venue: VenueList | null;
-  booking_date: string | null;
-  booking_end: string | null;
-  booking_time: string | null;
+  bookingDate: BookingDate | null;
   event_type: EventType | null;
   package: Packages | null;
   service: Service[] | null;
   guest_info: GuestInfo | null;
   contact_info: UserContact | null;
   total_price: number;
+};
+
+
+
+export type BookingDate = {
+  booking_date: string | null;
+  booking_end: string | null;
+  booking_time: string | null;
 };
 
 // export type VenueState = {

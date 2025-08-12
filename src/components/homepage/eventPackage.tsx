@@ -1,8 +1,9 @@
 import { FiCheck } from "react-icons/fi";
 import { usePackage } from "@/hooks/usePackage";
+import type { Packages } from "@/utils/types";
 
 export default function EventPackage() {
- const { data: packageList = [], isLoading, isError } = usePackage(); 
+ const { data: packageList = []} = usePackage(); 
 
   return (
     <section className="max-w-6xl mx-auto pt-20 px-6">
@@ -15,7 +16,7 @@ export default function EventPackage() {
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {packageList.map((pkg) => (
+        {packageList.map((pkg: Packages) => (
           <div
             key={pkg.package_id}
             className="border border-gray-300 rounded-lg bg-white p-8 shadow-sm"

@@ -7,9 +7,10 @@ import { useVenues } from "@/hooks/useVenues";
 import GrandHall from '@/assets/GrandHall.jpg';
 import Sunset from "@/assets/sunsetgarden.jpg";
 import Pavellion from "@/assets/grandpavellion.jpg";
+import type { VenueList } from "@/utils/types";
 
 export default function Venue() {
-  const { data: venueList = [], isLoading, isError } = useVenues();
+  const { data: venueList = []} = useVenues();
 
   // Map venue names to images
   const venueImages: Record<string, string> = {
@@ -28,7 +29,7 @@ export default function Venue() {
         </p>
 
         <div className="flex flex-wrap justify-center gap-4 mt-8">
-          {venueList.slice(0, 3).map((venue) => {
+          {venueList.slice(0, 3).map((venue: VenueList) => {
             const imgSrc =
               venueImages[venue.venue_name.replace(/\s+/g, '').toLowerCase()] ||
               venue.venue_img;

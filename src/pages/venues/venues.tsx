@@ -1,13 +1,14 @@
-import React, { useState } from "react";
 import Layout from "@/components/layout/layout";
 import { Button } from "@/components/ui/button";
 import { HiUsers, HiLocationMarker } from "react-icons/hi";
 import { useVenues } from "@/hooks/useVenues";
+import { useState } from "react";
 
 // Import images
 import GrandHall from '@/assets/GrandHall.jpg';
 import Sunset from "@/assets/sunsetgarden.jpg";
 import Pavellion from "@/assets/grandpavellion.jpg";
+import type { VenueList } from "@/utils/types";
 
 export default function Venues() {
   const venueImages: Record<string, string> = {
@@ -25,7 +26,7 @@ export default function Venues() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  const { data: venueList = [], isLoading, isError } = useVenues();
+  const { data: venueList = [], isLoading } = useVenues();
 
   const totalPages = Math.ceil(venueList.length / itemsPerPage);
   const paginatedVenues = venueList.slice(
@@ -50,7 +51,7 @@ export default function Venues() {
         <div className="text-center py-12">Loading venues...</div>
       ) : (
         <div className="grid grid-cols-4 justify-start gap-4 px-20 py-8">
-          {paginatedVenues.map((venue) => (
+          {paginatedVenues.map((venue: VenueList) => (
             <div
               key={venue.venue_id}
               className="border border-gray-200 w-full min-h-[450px] rounded-lg flex flex-col overflow-hidden shadow-sm"

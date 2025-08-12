@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useSelector } from "react-redux";
 import type { RootState } from "@/pages/booking/store"; // adjust path
 import StepOne from "@/pages/booking/components/stepOne";

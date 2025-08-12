@@ -31,15 +31,17 @@ export default function RecentBooking() {
         {recentBookings.map((recent, index) => (
           <div className="border border-gray-200 p-4" key={index}>
             <p>{recent.venue?.venue_name}</p>
-            <p>
-              {" "}
-              {recent.booking_date === recent.booking_end
-                ? formatted(recent.booking_date)
-                : `${formatted(recent.booking_date)} - ${formatted(
-                    recent.booking_end
-                  )}`}
-            </p>
-            <p>{recent.expected_guest}</p>
+           <p>
+  {recent.bookingDate?.booking_date && recent.bookingDate?.booking_end
+    ? recent.bookingDate.booking_date === recent.bookingDate.booking_end
+      ? formatted(new Date(recent.bookingDate.booking_date))
+      : `${formatted(new Date(recent.bookingDate.booking_date))} - ${formatted(
+          new Date(recent.bookingDate.booking_end)
+        )}`
+    : "No date available"}
+</p>
+
+            <p>{recent.guest_info.expected_guest}</p>
           </div>
         ))}
       </div>
