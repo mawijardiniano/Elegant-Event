@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./prisma-client-temp"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique(map: "Admin_email_key")
+  password String
+
+  @@map("Admin")
+}
+
+model EventType {
+  event_type_id Int       @id @default(autoincrement()) @map("event_type_id")
+  event_type    String    @map("event_type")
+  bookings      Booking[]
+
+  @@map("EventType")
+}
+
+model Package {
+  package_id    Int       @id @default(autoincrement()) @map("package_id")
+  package_name  String    @map("package_name")
+  features      String    @default("[]") @map("features") @db.Text
+  package_desc  String    @default("") @map("package_desc")
+  package_price Float     @default(0) @map("package_price")
+  bookings      Booking[]
+
+  @@map("Package")
+}
+
+model Tag {
+  tag_id   Int     @id @default(autoincrement()) @map("tag_id")
+  tag_name String  @map("tag_name")
+  venue    Venue[]
+
+  @@map("Tag")
+}
+
+model Venue {
+  venue_id       Int       @id @default(autoincrement()) @map("venue_id")
+  venue_name     String    @map("venue_name")
+  venue_ratings  Float?    @map("venue_ratings")
+  venue_desc     String    @map("venue_desc")
+  venue_capacity Int       @map("venue_capacity")
+  venue_loc      String    @map("venue_loc")
+  venue_price    Float     @map("venue_price")
+  tag_id         Int?
+  venue_img      String?   @map("venue_img")
+  bookings       Booking[]
+  tag            Tag?      @relation(fields: [tag_id], references: [tag_id], map: "Venue_tag_rel")
+
+  @@index([tag_id], map: "Venue_tag_idx")
+  @@map("Venue")
+}
+
+model Booking {
+  booking_id     Int              @id @default(autoincrement()) @map("booking_id")
+  venue_id       Int              @map("venue_id")
+  booking_date   DateTime         @map("booking_date")
+  event_type_id  Int              @map("event_type_id")
+  expected_guest Int              @map("expected_guest")
+  event_name     String           @map("event_name")
+  description    String?          @map("description")
+  request        String?          @map("request")
+  package_id     Int              @map("package_id")
+  first_name     String           @map("first_name")
+  last_name      String           @map("last_name")
+  email          String           @map("email")
+  number         String           @map("number")
+  total_price    Float            @default(0) @map("total_price")
+  booking_end    DateTime?        @map("booking_end")
+  booking_time   String?          @map("booking_time")
+  status         BookingStatus    @default(PENDING) @map("status")
+  event_type     EventType        @relation(fields: [event_type_id], references: [event_type_id], onDelete: NoAction, map: "Booking_event_type_rel")
+  package        Package          @relation(fields: [package_id], references: [package_id], onDelete: NoAction, map: "Booking_package_rel")
+  venue          Venue            @relation(fields: [venue_id], references: [venue_id], onDelete: NoAction, map: "Booking_venue_rel")
+  services       BookingService[]
+
+  @@index([event_type_id], map: "Booking_event_type_idx")
+  @@index([package_id], map: "Booking_package_idx")
+  @@index([venue_id], map: "Booking_venue_idx")
+  @@map("Booking")
+}
+
+model BookingService {
+  id         Int     @id @default(autoincrement()) @map("id")
+  booking_id Int     @map("booking_id")
+  serv_id    Int     @map("serv_id")
+  booking    Booking @relation(fields: [booking_id], references: [booking_id], onDelete: NoAction, map: "BookingService_booking_rel")
+  service    Service @relation(fields: [serv_id], references: [serv_id], onDelete: NoAction, map: "BookingService_serv_rel")
+
+  @@unique([booking_id, serv_id], map: "BookingService_booking_serv_key")
+  @@index([serv_id], map: "BookingService_serv_idx")
+  @@map("BookingService")
+}
+
+model Service {
+  serv_id    Int              @id @default(autoincrement()) @map("serv_id")
+  serv_name  String           @map("serv_name")
+  serv_price Float            @map("serv_price")
+  serv_type  String           @default("") @map("serv_type")
+  bookings   BookingService[]
+
+  @@map("Service")
+}
+
+enum BookingStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+}
