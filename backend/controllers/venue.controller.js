@@ -65,12 +65,12 @@ exports.editVenue = async (req, res) => {
     const updateData = {};
 
 
-    if (req.file) {
-      const originalName = req.file.originalname;
-      const destFileName = `images/${Date.now()}-${originalName}`;
-      const imageUrl = await uploadBuffer(req.file.buffer, destFileName);
-      updateData.venue_img = imageUrl;
-    }
+    // if (req.file) {
+    //   const originalName = req.file.originalname;
+    //   const destFileName = `images/${Date.now()}-${originalName}`;
+    //   const imageUrl = await uploadBuffer(req.file.buffer, destFileName);
+    //   updateData.venue_img = imageUrl;
+    // }
 
     if (venue_name !== undefined) updateData.venue_name = venue_name;
     if (venue_ratings !== undefined) updateData.venue_ratings = parseFloat(venue_ratings);

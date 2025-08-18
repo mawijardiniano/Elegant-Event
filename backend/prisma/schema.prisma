@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -27,7 +27,7 @@ model EventType {
 model Package {
   package_id    Int       @id @default(autoincrement()) @map("package_id")
   package_name  String    @map("package_name")
-  features      String    @default("[]") @map("features")@db.Text
+  features      String    @default("[]") @map("features") @db.Text
   package_desc  String    @default("") @map("package_desc")
   package_price Float     @default(0) @map("package_price")
   bookings      Booking[]
@@ -54,9 +54,9 @@ model Venue {
   tag_id         Int?
   venue_img      String?   @map("venue_img")
   bookings       Booking[]
-  tag            Tag?      @relation(fields: [tag_id], references: [tag_id], map: "Venue_tag_id_fkey")
+  tag            Tag?      @relation(fields: [tag_id], references: [tag_id], map: "Venue_tag_rel")
 
-  @@index([tag_id], map: "Venue_tag_id_fkey")
+  @@index([tag_id], map: "Venue_tag_idx")
   @@map("Venue")
 }
 
@@ -78,14 +78,14 @@ model Booking {
   booking_end    DateTime?        @map("booking_end")
   booking_time   String?          @map("booking_time")
   status         BookingStatus    @default(PENDING) @map("status")
-  event_type     EventType        @relation(fields: [event_type_id], references: [event_type_id], onDelete: NoAction, map: "Booking_event_type_id_fkey")
-  package        Package          @relation(fields: [package_id], references: [package_id], onDelete: NoAction, map: "Booking_package_id_fkey")
-  venue          Venue            @relation(fields: [venue_id], references: [venue_id], onDelete: NoAction, map: "Booking_venue_id_fkey")
+  event_type     EventType        @relation(fields: [event_type_id], references: [event_type_id], onDelete: NoAction, map: "Booking_event_type_rel")
+  package        Package          @relation(fields: [package_id], references: [package_id], onDelete: NoAction, map: "Booking_package_rel")
+  venue          Venue            @relation(fields: [venue_id], references: [venue_id], onDelete: NoAction, map: "Booking_venue_rel")
   services       BookingService[]
 
-  @@index([event_type_id], map: "Booking_event_type_id_fkey")
-  @@index([package_id], map: "Booking_package_id_fkey")
-  @@index([venue_id], map: "Booking_venue_id_fkey")
+  @@index([event_type_id], map: "Booking_event_type_idx")
+  @@index([package_id], map: "Booking_package_idx")
+  @@index([venue_id], map: "Booking_venue_idx")
   @@map("Booking")
 }
 
@@ -93,12 +93,12 @@ model BookingService {
   id         Int     @id @default(autoincrement()) @map("id")
   booking_id Int     @map("booking_id")
   serv_id    Int     @map("serv_id")
-  booking    Booking @relation(fields: [booking_id], references: [booking_id], onDelete: NoAction, map: "BookingService_booking_id_fkey")
-  service    Service @relation(fields: [serv_id], references: [serv_id], onDelete: NoAction, map: "BookingService_serv_id_fkey")
+  booking    Booking @relation(fields: [booking_id], references: [booking_id], onDelete: NoAction, map: "BookingService_booking_rel")
+  service    Service @relation(fields: [serv_id], references: [serv_id], onDelete: NoAction, map: "BookingService_serv_rel")
 
-  @@unique([booking_id, serv_id], map: "BookingService_booking_id_serv_id_key")
-  @@index([serv_id], map: "BookingService_serv_id_fkey")
-  @@map("Bookingservice")
+  @@unique([booking_id, serv_id], map: "BookingService_booking_serv_key")
+  @@index([serv_id], map: "BookingService_serv_idx")
+  @@map("BookingService")
 }
 
 model Service {

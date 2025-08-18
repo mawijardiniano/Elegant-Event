@@ -4,7 +4,7 @@ exports.getVenues = async () => {
   return await prisma.venue.findMany({
     include: {
       bookings: true,
-      tag: true 
+    //  tag: true  
     }
   });
 };
