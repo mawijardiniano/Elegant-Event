@@ -35,11 +35,10 @@ model Package {
 
   @@map("Package")
 }
-
 model Tag {
   tag_id   Int     @id @default(autoincrement()) @map("tag_id")
   tag_name String  @map("tag_name")
-  venue    Venue[]
+  venues   Venue[] @relation("VenueTags", through: VenueTag)
 
   @@map("Tag")
 }
@@ -52,14 +51,22 @@ model Venue {
   venue_capacity Int       @map("venue_capacity")
   venue_loc      String    @map("venue_loc")
   venue_price    Float     @map("venue_price")
-  tag_id         Int?
   venue_img      String?   @map("venue_img")
   bookings       Booking[]
-  tag            Tag?      @relation(fields: [tag_id], references: [tag_id], map: "Venue_tag_rel")
-
-  @@index([tag_id], map: "Venue_tag_idx")
-  @@map("Venue")
+  tags           Tag[]     @relation("VenueTags", through: VenueTag)
 }
+
+model VenueTag {
+  venue_id Int
+  tag_id   Int
+
+  venue Venue @relation(fields: [venue_id], references: [venue_id])
+  tag   Tag   @relation(fields: [tag_id], references: [tag_id])
+
+  @@id([venue_id, tag_id])
+  @@map("VenueTag")
+}
+
 
 model Booking {
   booking_id     Int              @id @default(autoincrement()) @map("booking_id")
