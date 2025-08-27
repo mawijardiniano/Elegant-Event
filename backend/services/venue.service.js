@@ -4,26 +4,38 @@ exports.getVenues = async () => {
   return await prisma.venue.findMany({
     include: {
       bookings: true,
-    //  tag: true  
+      venueTags: {
+        include: {
+          tag: true
+        }
+      }
     }
   });
 };
 
+
+
 exports.createVenue = async (data) => {
-  const { tag_id, ...otherData } = data
+  const { tags: tagIds, ...otherData } = data;
 
   const venue = await prisma.venue.create({
     data: {
       ...otherData,
-      tag_id: tag_id ? Number(tag_id) : null
+      venueTags: {
+        create: tagIds?.map(tag_id => ({
+          tag: { connect: { tag_id: parseInt(tag_id) } } 
+        }))
+      }
+    },
+    include: {
+      venueTags: { include: { tag: true } }
     }
-  })
+  });
 
-  return await prisma.venue.findUnique({
-    where: { venue_id: venue.venue_id },
-    include: { tag: true } 
-  })
-}
+  return venue;
+};
+
+
 
 
 exports.editVenue = async (id, data) => {

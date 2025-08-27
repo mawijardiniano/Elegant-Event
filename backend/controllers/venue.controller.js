@@ -20,16 +20,8 @@ exports.createVenue = async (req, res) => {
       venue_capacity,
       venue_loc,
       venue_price,
-      tag_id = []
+      tags = [] // expect an array of tag IDs from the request body
     } = req.body;
-
-    // let imageUrl = null;
-
-    // if (req.file) {
-    //   const originalName = req.file.originalname;
-    //   const destFileName = `images/${Date.now()}-${originalName}`;
-    //   imageUrl = await uploadBuffer(req.file.buffer, destFileName);
-    // }
 
     const venue = await venueService.createVenue({
       venue_name,
@@ -38,8 +30,7 @@ exports.createVenue = async (req, res) => {
       venue_capacity: parseInt(venue_capacity),
       venue_loc,
       venue_price: parseFloat(venue_price),
-      // venue_img: imageUrl,
-      tag_id
+      tags
     });
 
     res.status(201).json({ message: "Venue created", venue });
@@ -48,6 +39,7 @@ exports.createVenue = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 exports.editVenue = async (req, res) => {
   try {
