@@ -29,7 +29,7 @@ export default function EventPackage() {
               <span className="text-4xl font-bold text-gray-900">
                 ₱
                 {pkg.package_price === 0
-                  ? 66000
+                  ? 5000
                   : pkg.package_price.toLocaleString()}
               </span>
 

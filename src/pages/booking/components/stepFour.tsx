@@ -46,7 +46,7 @@ export default function StepFour() {
     };
 
     fetchAll();
-  }, []);  // <-- Added empty dependency array here!
+  }, []);
 
   const handleSelectPackage = (pkg: Packages) => {
     setSelectedPackage(pkg.package_id);
@@ -101,7 +101,7 @@ export default function StepFour() {
             >
               <p className="text-center text-xl font-bold mb-1">{p.package_name}</p>
               <p className="text-center text-xl font-bold mb-1">
-                {p.package_price === 66000 ? "(Included)" : "₱" + p.package_price.toFixed(2)}
+                {p.package_price === 0 ? "(Included)" : "₱" + p.package_price.toFixed(2)}
               </p>
               <p className="text-center text-gray-500 text-xs">{p.package_desc}</p>
 

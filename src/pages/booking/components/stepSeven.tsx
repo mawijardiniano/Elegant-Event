@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/pages/booking/store";
+import axios from "axios";
 
 export default function StepSeven() {
   const dispatch = useDispatch();
@@ -27,115 +28,106 @@ export default function StepSeven() {
     (state: RootState) => state.booking.total_price
   );
 
+  // Price calculations
   const venuePrice = venue?.venue_price || 0;
   const packagePrice = pkg?.package_price || 0;
-const expectedGuests = guestInfo?.expected_guest || 1;
+  const expectedGuests = guestInfo?.expected_guest || 1;
 
-const servicesTotal = (service || []).reduce((acc: number, s) => {
-  const perPersonPrice = s.serv_type === "per_person" ? expectedGuests : 1;
-  return acc + (s.serv_price || 0) * perPersonPrice;
-}, 0);
+  const servicesTotal = (service || []).reduce((acc: number, s) => {
+    const perPersonPrice = s.serv_type === "per_person" ? expectedGuests : 1;
+    return acc + (s.serv_price || 0) * perPersonPrice;
+  }, 0);
 
-const total = venuePrice + packagePrice + servicesTotal;
+  const total = venuePrice + packagePrice + servicesTotal;
 
-
+  // Local state
   const [name, setName] = useState("");
   const [cardError, setCardError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+const handlePayment = async () => {
+  console.log("💳 Starting payment process...");
+  setCardError(null);
 
-  const handlePayment = async () => {
-    setCardError(null);
+  if (!name.trim()) {
+    setCardError("Please enter the name on the card.");
+    return;
+  }
 
-    if (!name.trim()) {
-      setCardError("Please enter the name on the card.");
+  if (!stripe || !elements) {
+    setCardError("Stripe has not loaded yet.");
+    return;
+  }
+
+  const cardElement = elements.getElement(CardElement) as StripeCardElement | null;
+  if (!cardElement) {
+    setCardError("Card element not found.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    // 1️⃣ Create payment intent
+    const { data } = await axios.post(import.meta.env.VITE_PAYMENT_API, {
+      amount: total * 100, // use calculated total
+      email: contactInfo?.email,
+    });
+
+    if (!data.clientSecret) throw new Error("Missing client secret");
+
+    // 2️⃣ Confirm payment
+    const result = await stripe.confirmCardPayment(data.clientSecret, {
+      payment_method: { card: cardElement, billing_details: { name } },
+    });
+
+    if (result.error) {
+      setCardError(result.error.message || "Payment failed.");
       return;
     }
 
-    if (!stripe || !elements) {
-      setCardError("Stripe has not loaded yet.");
-      return;
+    if (result.paymentIntent?.status === "succeeded") {
+      // 3️⃣ Build booking payload
+      const bookingPayload = {
+        venue_id: venue?.venue_id,
+        package_id: pkg?.package_id ?? undefined,
+        booking_date: booking_date?.booking_date
+          ? new Date(booking_date.booking_date).toISOString()
+          : undefined,
+        booking_end: booking_date?.booking_end
+          ? new Date(booking_date.booking_end).toISOString()
+          : undefined,
+        booking_time: booking_date?.booking_time ?? undefined,
+        total_price: total, // send calculated total
+        event_type_id: guestInfo?.event_type?.event_type_id ?? undefined,
+        expected_guest: guestInfo?.expected_guest ?? 0,
+        event_name: guestInfo?.event_name ?? "",
+        description: guestInfo?.description ?? undefined,
+        request: guestInfo?.request ?? undefined,
+        first_name: contactInfo?.first_name ?? "",
+        last_name: contactInfo?.last_name ?? "",
+        email: contactInfo?.email ?? "",
+        number: contactInfo?.number ?? "",
+        services: (service ?? []).map((s) => ({ serv_id: s.serv_id })),
+      };
+
+      console.log("📤 Sending booking to backend:", bookingPayload);
+      const bookingRes = await axios.post(import.meta.env.VITE_ADD_BOOKING_API, bookingPayload);
+
+      console.log("📥 Booking API response:", bookingRes.data);
+      dispatch(nextStep());
     }
-
-    const cardElement = elements.getElement(
-      CardElement
-    ) as StripeCardElement | null;
-    if (!cardElement) {
-      setCardError("Card element not found.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const res = await fetch(import.meta.env.VITE_PAYMENT_API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: totalPrice * 100,
-          email: contactInfo?.email,
-        }),
-      });
-
-      const data = await res.json();
-      if (!data.clientSecret) throw new Error("Missing client secret");
-
-      const result = await stripe.confirmCardPayment(data.clientSecret, {
-        payment_method: {
-          card: cardElement,
-          billing_details: { name },
-        },
-      });
-
-      if (result.error) {
-        setCardError(result.error.message || "Payment failed.");
-        setLoading(false);
-        return;
-      }
-
-      if (result.paymentIntent?.status === "succeeded") {
-        const bookingPayload = {
-          venue_id: venue?.venue_id,
-          package_id: pkg?.package_id ?? null,
-          booking_date,
-          total_price: totalPrice,
-          event_type_id: guestInfo?.event_type?.event_type_id ?? null,
-          expected_guest: guestInfo?.expected_guest ?? 0,
-          event_name: guestInfo?.event_name ?? "",
-          description: guestInfo?.description ?? "",
-          request: guestInfo?.request ?? "",
-          first_name: contactInfo?.first_name ?? "",
-          last_name: contactInfo?.last_name ?? "",
-          email: contactInfo?.email ?? "",
-          number: contactInfo?.number ?? "",
-          services: {
-            create: (service ?? []).map((s) => ({
-              serv_id: s.serv_id,
-            })),
-          },
-        };
-
-        const bookingRes = await fetch(
-          import.meta.env.VITE_ADD_BOOKING_API,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(bookingPayload),
-          }
-        );
-
-        if (!bookingRes.ok) {
-          throw new Error("Booking creation failed.");
-        }
-
-        dispatch(nextStep());
-      }
-    } catch (err) {
-      console.error(err);
-      setCardError("Something went wrong.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (err: any) {
+    console.error("❌ Payment/Booking error:", err);
+    setCardError(
+      err.response?.data?.error ||
+      err.message ||
+      "Something went wrong during payment."
+    );
+  } finally {
+    setLoading(false);
+    console.log("🔚 Payment process ended.");
+  }
+};
 
   return (
     <div className="flex flex-col items-center py-12 px-4">
@@ -154,6 +146,7 @@ const total = venuePrice + packagePrice + servicesTotal;
         </p>
 
         <div className="flex flex-row gap-8">
+          {/* Card Info */}
           <div className="border border-gray-200 p-4 w-full">
             <h2 className="text-lg font-semibold mb-1">Card Information</h2>
 
@@ -180,9 +173,7 @@ const total = venuePrice + packagePrice + servicesTotal;
                       "::placeholder": { color: "#aab7c4" },
                       fontFamily: "Arial, sans-serif",
                     },
-                    invalid: {
-                      color: "#9e2146",
-                    },
+                    invalid: { color: "#9e2146" },
                   },
                 }}
                 onChange={(e) => setCardError(e.error ? e.error.message : null)}
@@ -192,6 +183,7 @@ const total = venuePrice + packagePrice + servicesTotal;
             {cardError && <p className="text-red-600 mb-2">{cardError}</p>}
           </div>
 
+          {/* Order Summary */}
           <div className="w-full border border-gray-200 p-4">
             <h2 className="text-lg font-semibold mb-1">Order Summary</h2>
             <div className="flex flex-row justify-between">
@@ -208,33 +200,35 @@ const total = venuePrice + packagePrice + servicesTotal;
                   </div>
                 )}
 
-               {service && service.length > 0 && (
-  <div className="mt-2">
-    <ul className="list-none list-inside">
-      {service.map((s, idx) => {
-        const isPerPerson = s.serv_type === "per_person";
-        const price = isPerPerson
-          ? (s.serv_price || 0) * expectedGuests
-          : s.serv_price || 0;
+                {service && service.length > 0 && (
+                  <div className="mt-2">
+                    <ul className="list-none list-inside">
+                      {service.map((s, idx) => {
+                        const isPerPerson = s.serv_type === "per_person";
+                        const price = isPerPerson
+                          ? (s.serv_price || 0) * expectedGuests
+                          : s.serv_price || 0;
 
-        return (
-          <li key={idx} className="flex justify-between text-sm">
-            {s.serv_name}
-            <span>
-              ₱{price.toLocaleString()}
-              {isPerPerson && (
-                <span className="text-xs text-gray-500 ml-1">
-                  ({expectedGuests} guests)
-                </span>
-              )}
-            </span>
-          </li>
-        );
-      })}
-    </ul>
-  </div>
-)}
-
+                        return (
+                          <li
+                            key={idx}
+                            className="flex justify-between text-sm"
+                          >
+                            {s.serv_name}
+                            <span>
+                              ₱{price.toLocaleString()}
+                              {isPerPerson && (
+                                <span className="text-xs text-gray-500 ml-1">
+                                  ({expectedGuests} guests)
+                                </span>
+                              )}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
 
                 <Separator className="my-4 border border-gray-200" />
                 <p className="text-lg font-bold flex flex-row justify-between">
@@ -245,7 +239,8 @@ const total = venuePrice + packagePrice + servicesTotal;
           </div>
         </div>
 
-        <div className="flex justify-between  pt-8">
+        {/* Buttons */}
+        <div className="flex justify-between pt-8">
           <Button
             className="bg-black text-white"
             onClick={() => dispatch(prevStep())}

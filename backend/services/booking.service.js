@@ -16,15 +16,28 @@ exports.getBookings = async () => {
     },
   });
 };
-
 exports.createBooking = async (data) => {
-  const { booking_date, ...rest } = data;
+  const {
+    booking_date,
+    booking_end,
+    booking_time,
+    services,
+    ...rest
+  } = data;
 
   const bookingData = {
     ...rest,
-    booking_date: booking_date?.start ? new Date(booking_date.start) : undefined,
-    booking_end: booking_date?.end ? new Date(booking_date.end) : undefined,
+    booking_date: booking_date ? new Date(booking_date) : null, // ✅ ensure valid Date
+    booking_end: booking_end ? new Date(booking_end) : null,   
+    booking_time,
   };
+
+  // Only add services if array is not empty
+  if (Array.isArray(services) && services.length > 0) {
+    bookingData.services = {
+      create: services.map((s) => ({ serv_id: s.serv_id })),
+    };
+  }
 
   return await prisma.booking.create({
     data: bookingData,
@@ -32,14 +45,11 @@ exports.createBooking = async (data) => {
       venue: true,
       event_type: true,
       package: true,
-      services: {
-        include: {
-          service: true,
-        },
-      },
+      services: { include: { service: true } },
     },
   });
 };
+
 
 exports.updateBooking = async (id, data) => {
   return await prisma.booking.update({

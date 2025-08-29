@@ -17,17 +17,18 @@ import {
   HiPhone,
   HiMail,
 } from "react-icons/hi";
-import type { Booking, Service } from "@/utils/types";
+import type { RootState } from "../store";
+import type { Service } from "@/utils/types";
 
 export default function StepSix() {
   const dispatch = useDispatch();
 
-  const venue = useSelector((state: Booking) => state.venue);
-  const bookingDate = useSelector((state: Booking) => state.bookingDate);
-  const event = useSelector((state: Booking) => state.guest_info);
-  const contact = useSelector((state: Booking) => state.contact_info);
-  const pkg = useSelector((state: Booking) => state.package);
-  const services = useSelector((state: Booking) => state.service || []);
+  const venue = useSelector((state: RootState) => state.booking.venue);
+  const bookingDate = useSelector((state: RootState) => state.booking.bookingDate);
+  const event = useSelector((state: RootState) => state.booking.guest_info);
+  const contact = useSelector((state: RootState) => state.booking.contact_info);
+  const pkg = useSelector((state: RootState) => state.booking.package);
+  const services = useSelector((state: RootState) => state.booking.service || []);
 
   let startDate: Date | null = null;
   if (bookingDate?.booking_date) {
@@ -69,7 +70,6 @@ export default function StepSix() {
         </p>
 
         <div className="flex flex-row gap-4 mt-4">
-          {/* Event Info */}
           <div className="border border-gray-200 p-4 w-96 rounded-md">
             <h2 className="font-bold text-xl mb-4">Event Details</h2>
 

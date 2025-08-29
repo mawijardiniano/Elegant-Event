@@ -12,9 +12,8 @@ import type { VenueList } from "@/utils/types";
 export default function Venue() {
   const { data: venueList = []} = useVenues();
 
-  // Map venue names to images
   const venueImages: Record<string, string> = {
-    grandhallroyale: GrandHall,
+    thegrandhall: GrandHall,
     sunsetgarden: Sunset,
     thegrandpavilion: Pavellion
   };

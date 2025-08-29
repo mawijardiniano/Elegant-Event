@@ -21,7 +21,7 @@ export default function StepTwo() {
   const [time, setTime] = useState<string>("12:00");
   const [showError, setShowError] = useState(false);
   const [disabledDates, setDisabledDates] = useState<Date[]>([]);
-  const url = import.meta.env.VITE_BOOKING_API
+  const url = import.meta.env.VITE_BOOKING_API;
 
   const fetchBookedDates = async () => {
     try {
@@ -29,20 +29,19 @@ export default function StepTwo() {
       const res = await axios.get(url);
       const dates: Date[] = [];
 
-res.data.forEach((booking: Booking) => {
-  if (!booking.bookingDate?.booking_date) {
-    return;
-  }
+      res.data.forEach((booking: Booking) => {
+        if (!booking.bookingDate?.booking_date) {
+          return;
+        }
 
-  const start = parseISO(booking.bookingDate.booking_date);
-  const end = booking.bookingDate?.booking_end
-    ? parseISO(booking.bookingDate.booking_end)
-    : start;
+        const start = parseISO(booking.bookingDate.booking_date);
+        const end = booking.bookingDate?.booking_end
+          ? parseISO(booking.bookingDate.booking_end)
+          : start;
 
-  const range = eachDayOfInterval({ start, end });
-  dates.push(...range);
-});
-
+        const range = eachDayOfInterval({ start, end });
+        dates.push(...range);
+      });
 
       console.log("Booked dates fetched:", dates);
       setDisabledDates(dates);
@@ -54,6 +53,7 @@ res.data.forEach((booking: Booking) => {
   useEffect(() => {
     fetchBookedDates();
   }, []);
+
 
   const handleContinue = () => {
     if (!range?.from) {
@@ -80,7 +80,13 @@ res.data.forEach((booking: Booking) => {
     console.log("Booking End:", bookingEnd);
     console.log("Selected Time:", time);
 
-    dispatch(setBookingDate({ booking_date: bookingStart!, booking_end: bookingEnd, booking_time: time }));
+    dispatch(
+      setBookingDate({
+        booking_date: bookingStart!,
+        booking_end: bookingEnd,
+        booking_time: time,
+      })
+    );
 
     dispatch(nextStep());
   };

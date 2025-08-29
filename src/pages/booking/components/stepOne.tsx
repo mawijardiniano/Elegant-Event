@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setVenue, nextStep } from "@/pages/booking/redux/bookingSlice";
 import { Button } from "@/components/ui/button";
 import type { VenueList } from "@/utils/types";
@@ -7,10 +7,10 @@ import { HiUsers, HiLocationMarker } from "react-icons/hi";
 import ProgressComponent from "./progress";
 import { useVenues } from "@/hooks/useVenues";
 
-// Import images
 import GrandHall from '@/assets/GrandHall.jpg';
 import Sunset from "@/assets/sunsetgarden.jpg";
 import Pavellion from "@/assets/grandpavellion.jpg";
+import type { RootState } from "../store";
 
 export default function StepOne() {
   const dispatch = useDispatch();
@@ -20,17 +20,18 @@ export default function StepOne() {
 
   const { data: venueList = [], isLoading, isError } = useVenues();
 
-  // Image map
+ const reduxVenue = useSelector((state: RootState) => state.booking.venue);
+  console.log("Redux stored venue:", reduxVenue);
+
   const venueImages: Record<string, string> = {
     grandhallroyale: GrandHall,
     sunsetgarden: Sunset,
     thegrandpavilion: Pavellion,
   };
 
-  // Normalize venue name and get image or fallback
   const getVenueImage = (venueName: string) => {
     const normalized = venueName.toLowerCase().replace(/\s+/g, "");
-    return venueImages[normalized] || Sunset; // fallback image
+    return venueImages[normalized] || Sunset;
   };
 
   const handleSelectVenue = (venue: VenueList) => {
